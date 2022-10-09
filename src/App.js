@@ -26,30 +26,13 @@ class App extends React.Component {
     this.setState({ otherSchedule: [...origSchedule, ...newSchedule]})
   }
 
-    // function when submit is clicked
-    submitForm = () => {
-      // get form div
-      const form = document.getElementById('form');
-      // removes element from DOM after submitting
-      form.style.display = 'none';
-      // get message/instructions div
-      const message = document.getElementById('message');
-      // show message/instructions after submitting
-      message.style.display = 'block';
-    }
-
   render() {
     return (
       <div>
         <h1>youFree?</h1>
         <p>Select the times you're free below!</p>
         {datePicker}
-        <div id="form">
-          <h3>Sign In</h3>
-          <input type="text" placeholder="Name"></input>
-          <input type="password" placeholder="Password (optional)"></input>
-          <button onClick={this.submitForm}>Submit</button>
-        </div>
+
         <div id="message">
           <h3>My Availability</h3>
           <p>Click and Drag to Toggle; Saved Immediately</p>
@@ -58,6 +41,7 @@ class App extends React.Component {
           <div class="col-4">
           <ScheduleSelector
               selection={this.state.schedule}
+              startDate={new Date()}
               numDays={7}
               minTime={8}
               maxTime={22}
