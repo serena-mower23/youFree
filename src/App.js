@@ -7,19 +7,20 @@ import 'react-date-picker/dist/DatePicker.css'
 import 'react-calendar/dist/Calendar.css'
 
 
-function datePicker() {
+ function datePicker() {
   const [value, onChange] = useState(new Date());
 
-  return (
-    <DatePicker onChange={onChange} value={value} />
-  );
-}
+   return (
+  <DatePicker onChange={onChange} value={value} />
+   );
+ }
 
 let origSchedule = []
 
 class App extends React.Component {
   state = { schedule: [],
             otherSchedule: origSchedule };
+
 
   handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
@@ -32,13 +33,12 @@ class App extends React.Component {
         <h1>youFree?</h1>
         <p>Select the times you're free below!</p>
         {datePicker}
-
         <div id="message">
           <h3>My Availability</h3>
           <p>Click and Drag to Toggle; Saved Immediately</p>
         </div>
         <div class="row justify-content-center">
-          <div class="col-4">
+          <div class="col-6">
           <ScheduleSelector
               selection={this.state.schedule}
               startDate={new Date()}
@@ -53,7 +53,7 @@ class App extends React.Component {
               onChange={this.handleChange}
               />
           </div>
-          <div class="col-4">
+          <div class="col-6">
             <ScheduleSelector
               selection={this.state.otherSchedule}
               startDate={new Date()}

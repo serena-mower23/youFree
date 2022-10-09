@@ -124,7 +124,7 @@ passport.serializeUser(function(user, done) {
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(__dirname + '/../../public')); //FIX ME 
+app.use(express.static(__dirname + '/../../public')); 
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
@@ -142,7 +142,7 @@ client.connect()
 })
 
 app.get('/', function(req, res) {
-    res.render('index', { user: req.user, layout:false });
+    res.render('login', { user: req.user, layout:false });
   });
   
   // '/account' is only available to logged in user
