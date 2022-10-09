@@ -17,4 +17,4 @@ class EventCalendar extends React.Component {
     }
 }
 
-export default hot(EventCalendar);
+export default EventCalendar;
