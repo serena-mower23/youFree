@@ -1,11 +1,11 @@
 const express = require( 'express' ),
       mongodb = require( 'mongodb' ),
-      app     = express(),
-      hbs     = require( 'express-handlebars' ).engine,
-      config = require('./src/config.js'),
-      cookieParser = require('cookie-parser'),
-      ////expressSession = require('express-session'),
-      methodOverride = require('method-override');
+      app     = express();
+      // hbs     = require( 'express-handlebars' ).engine,
+      // config = require('./src/config.js'),
+      // cookieParser = require('cookie-parser'),
+      // expressSession = require('express-session'),
+      // methodOverride = require('method-override');
 
 app.use( express.json() )
 
@@ -21,8 +21,8 @@ app.set(    'views',       './dist' )
 // app.set('views', __dirname + '/views');
 // app.set('view engine', 'html');
 
-app.use(methodOverride());
-app.use(cookieParser());
+// app.use(methodOverride());
+// app.use(cookieParser());
 
 app.use(express.urlencoded({ extended : true }));
 
