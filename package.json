@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "connect-mongo": "^4.6.0",
+    "cookie-session": "^2.0.0",
     "css-loader": "^6.7.1",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
