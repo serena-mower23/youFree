@@ -28,12 +28,14 @@ class Home extends React.Component {
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
-                                    <a className="nav-link" href="#">Create</a>
+                                    <Link className="nav-link" to='/calendar'>
+                                        Create
+                                    </Link>
                                 </li>
                             </ul>
                             <form className="nav-item d-flex">
-                                <Link to='/'>
-                                    <button className="nav-link btn" href="#">Log out</button>
+                                <Link className="nav-link" to='/'>
+                                    Log out
                                 </Link>
                             </form>
                         </div>

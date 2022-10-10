@@ -78,7 +78,7 @@ exports.destroySessionUrl = 'https://login.microsoftonline.com/common/oauth2/log
 exports.useMongoDBSessionStore = true;
 
 // If you want to use mongoDB, provide the uri here for the database.
-exports.databaseUri = 'mongodb+srv://'+MONGO_USER+':'+MONGO_PASS+'@'+HOST+'/?retryWrites=true&w=majority';
+//exports.databaseUri = 'mongodb+srv://'+MONGO_USER+':'+MONGO_PASS+'@'+HOST+'/?retryWrites=true&w=majority';
 
 // How long you want to keep session in mongoDB.
 exports.mongoDBSessionMaxAge = 24 * 60 * 60 * 30;  // 30 days (unit is second) (I think lol)
