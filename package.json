@@ -13,6 +13,7 @@
     "start": "webpack serve --hot --mode development"
   },
   "dependencies": {
+    "connect-mongo": "^4.6.0",
     "css-loader": "^6.7.1",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
@@ -22,6 +23,7 @@
     "react-day-picker": "^8.3.1",
     "react-dom": "^18.2.0",
     "react-hot-loader": "^4.13.0",
+    "react-router-dom": "^6.4.2",
     "react-schedule-selector": "^2.0.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.6"
