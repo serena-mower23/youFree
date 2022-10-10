@@ -21,8 +21,8 @@ app.set(    'views',       './dist' )
 // app.set('views', __dirname + '/views');
 // app.set('view engine', 'html');
 
-// app.use(methodOverride());
-// app.use(cookieParser());
+// // app.use(methodOverride());
+// // app.use(cookieParser());
 
 app.use(express.urlencoded({ extended : true }));
 
@@ -47,6 +47,12 @@ client.connect()
 app.get('/', function(req, res) {
     res.render('index');
   });
+
+app.get('/*', function(req, res) {
+    res.sendFile(__dirname + '/dist/index.html', function(err) {
+        res.status(500).send(err)
+    })
+})
   
 
 app.listen( 8080 )

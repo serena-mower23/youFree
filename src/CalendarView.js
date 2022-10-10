@@ -3,9 +3,9 @@ import ScheduleSelector from "react-schedule-selector";
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import { Link } from "react-router-dom";
 import Select from "react-select";
 import icsToJson from 'ics-to-json';
+import Navbar from "./NavBar";
 import axios from 'axios';
 
 function datePicker() {
@@ -158,6 +158,7 @@ class CalendarView extends React.Component {
         return (
             <div>
                 <div className="container">
+                    <Navbar />
                     <div className="row">
                         <div className="col-md-3"></div>
                         <div className="col-md-6">
