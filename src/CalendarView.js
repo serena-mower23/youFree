@@ -1,13 +1,11 @@
 import React, { useState} from "react";
 import ScheduleSelector from "react-schedule-selector";
-import DatePicker from 'react-date-picker';
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import Calendar from 'react-calendar';
+import DatePicker from "react-datepicker";
 import Select from "react-select";
 import icsToJson from 'ics-to-json';
 import Navbar from "./NavBar";
 import axios from 'axios';
+import "react-datepicker/dist/react-datepicker.css";
   
 let origSchedule = [new Date('2022-10-01 10:00:00'),
 new Date('2022-10-01 11:00:00'),
@@ -25,7 +23,7 @@ let blankSchedule = []
 const values = [
     {label: "Blank Week", startDate: new Date("10-09-2022"), numDays: 7, dateFormat: "ddd"},
     {label: "Blank Work Week", startDate: new Date("10-10-2022"), numDays: 5, dateFormat: "ddd"},
-    {label: "Custom Week", startDate: new Date("10-10-2022"), numDays: 5, dateFormat: "m/d"}
+    {label: "Custom Week", startDate: new Date("10-11-2022"), numDays: 5, dateFormat: "M/D"}
 ]
 
 // const inputFile = document.querySelector('input')
@@ -56,69 +54,71 @@ class CalendarView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            name: "Hello",
             schedule: [],
             otherSchedule: origSchedule,
             selectedOption: {
                 label: "Blank Week",
                 startDate: new Date("10-09-2022"),
                 numDays: 7,
-                dateFormat: "d/m"
+                dateFormat: "ddd"
             },
             //selectedFile: null,
-            dateStart: new Date("10-02-2022"),
-            dateEnd: new Date("10-04-2022"),
-            flag: true
+            days: {
+                from: { year: 2022, month: 10, day: 2},
+                to: { year: 2022, month: 10, day: 5 }
+            },
+            selectedDate: new Date("10-13-2022")
         }
 
-      this.onFileChange = this.onFileChange.bind(this);
+    //   this.onFileChange = this.onFileChange.bind(this);
       this.handleDisplay = this.handleDisplay.bind(this);
       this.handleState = this.handleState.bind(this);
-      this.handleDateChange = this.handleDateChange(this);
+      this.handleDateChange = this.handleDateChange.bind(this);
+      this.submitCalendar = this.submitCalendar.bind(this);
 
     }
       
     handleDisplay = selectedOption => {
         this.setState({ selectedOption: selectedOption });
-        this.setState({ label: selectedOption.label})
-        this.setState({ startDate: selectedOption.startDate });
-        this.setState({ numDays: selectedOption.numDays });
-        this.setState({ dateFormat: selectedOption.dateFormat });
-        console.log(selectedOption);
     };
 
     handleState = newSchedule => {
         this.setState({ schedule: newSchedule })
         this.setState({ otherSchedule: [...origSchedule, ...newSchedule]})
-        console.log(this.state.schedule);
     }
 
-      // On file select (from the pop up)
-      onFileChange = event => {
-      
-        // Update the state
-        this.setState({ selectedFile: event.target.files[0]});
-        console.log("hello from the inside of onFileChange");
-        console.log(event.target.files[0]);
-        const icsRes = fetch(event.target.files[0])
-        const icsData = icsRes.text()
-            // Convert
-        const data = icsToJson(icsData)
-        this.console.log(data)
+    handleNameChange = newName => {
+        this.setState({name: newName});
+        console.log(this.state.name);
+    }
+
+    handleDateChange = newDay => {
+        this.setState({selectedDate: newDay});
+        console.log(this.selectedDay);
       };
 
-      handleDateChange = newDay => {
-        console.log(newDay)
-        if (this.flag) {
-            this.setState({ dateStart: newDay});
-            this.setState({ flag:false})
-        }
-        else {
-            this.setState({ dateEnd: newDay});
-            this.setState({ flag:true})
+      submitCalendar = submit => {
+        for (let i = 0; i < this.state.schedule.length; i++) {
+            console.log(new Date(this.state.schedule[i]));
         }
       }
 
-      displayCalendar = 
+
+
+    //   // On file select (from the pop up)
+    //   onFileChange = event => {
+      
+    //     // Update the state
+    //     this.setState({ selectedFile: event.target.files[0]});
+    //     console.log("hello from the inside of onFileChange");
+    //     console.log(event.target.files[0]);
+    //     const icsRes = fetch(event.target.files[0])
+    //     const icsData = icsRes.text()
+    //         // Convert
+    //     const data = icsToJson(icsData)
+    //     this.console.log(data)
+    //   };
     
       // On file upload (click the upload button)
     //   onFileUpload = () => {
@@ -176,9 +176,13 @@ class CalendarView extends React.Component {
         return (
             <div>
                 <Navbar />
-                <div class="row justify-content-evenly">
+                <div className="row justify-content-evenly">
                     <div className="col-md-3 themed-grid-col">
-                        <div class="mb-5 mt-5 m-auto">
+                        {/* <div className="mb-5 mt-5 ms-4 m-auto">
+                            <label className="form-label" htmlFor="yfTitle">Please enter a name:</label>
+                            <input className="form-control" type="text" onChange={this.handleNameChange} />
+                        </div> */}
+                        <div className="mb-5 mt-5m-auto">
                             <p>Select the type of youFree you wish to create.</p>
                             <Select
                                 value={this.state.selectedOption.label} 
@@ -186,41 +190,46 @@ class CalendarView extends React.Component {
                                 onChange={this.handleDisplay}
                             />
                         </div>
+                        <p>Enter the information for your youFree below.</p>
                         <div className="mb-5 m-auto">
-                            <p>Enter the dates you want to create a youFree for.</p>
-
-                            <form action="/create" method="POST" novalidate>
-                                <div class="mb-3">
-                                    <label class="form-label" for="username">Start Date:</label>
-                                    <input class="form-control" type="text" name="startDate" id="startDate" required/>
-                                    <div class="invalid-feedback">Please provide a start date.</div> 
+                            <form>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="yfTitle">Please enter a name:</label>
+                                    <input className="form-control" type="text" onChange={this.handleNameChange} />
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label" for="password">End Date:</label>
-                                    <input class="form-control" type="text" name="endDate" id="endDate" required/>
-                                    <div class="invalid-feedback">Please provide an end date.</div> 
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="startDate">Start Date:</label>
+                                    <input className="form-control" type="text" name="startDate" id="startDate" required/>
+                                    <div className="invalid-feedback">Please provide a start date.</div> 
                                 </div>
-                                <div class="d-grid d-sm-block text-center">
-                                    <button type="submit" class="btn btn-primary" onClick={this.displayCalendar}>Create Calendar</button>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="numberDays">Number of Days:</label>
+                                    <input className="form-control" type="text" name="numberDays" id="numberDays" required/>
+                                    <div className="invalid-feedback">Please provide a number of days.</div> 
+                                </div>
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary" >Create Calendar</button>
                                 </div>
                             </form>
                         </div>
-                        <div class="mb-5">
+                        {/* <div className="mb-5 m-auto"> */}
                             {/* Currently just shows the calendar */}
-                            <Calendar 
-                                // returnValue={"range"}
-                                // selectRange={true}
-                                //onClikcDay={this.handleDateChange} 
-                                //value={[this.state.dateStart, this.state.dateEnd]} 
+                            {/* <DatePicker 
+                                selected={this.state.selectedDate}
+                                onChange={this.handleDateChange}
+                                onSelect={this.handleDateChange} 
                             />
-                        </div>
-                        <div class="mb-5">
-                            <form action=""
-                        </div>
+                        </div> */}
                     </div>
-                    <div class="col-md-6 themed-grid-col">
-                        <h3 class="text-center">My Availability</h3>
-                        <p class="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                    <div className="col-md-6 themed-grid-col">
+                        <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                        <div className="mb-5 m-auto">
+                            <form action="/create" method="POST">
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary">Create youFree?</button>
+                                </div>
+                            </form>
+                        </div>
                         <ScheduleSelector
                             selection={this.state.schedule}
                             startDate={this.state.selectedOption.startDate}
@@ -235,9 +244,6 @@ class CalendarView extends React.Component {
                             hoveredColor={"#ADB2AE"}
                             onChange={this.handleState}
                         />
-                    </div>
-                    <div class="col-md-3 themed-grid-col">
-                        <h3 class="text-center">Click here to </h3>
                     </div>
                 </div>
                 {/* <div>
