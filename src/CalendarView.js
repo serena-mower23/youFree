@@ -89,6 +89,7 @@ class CalendarView extends React.Component {
     handleState = newSchedule => {
         this.setState({ schedule: newSchedule })
         this.setState({ otherSchedule: [...origSchedule, ...newSchedule]})
+        console.log(this.state.schedule);
     }
 
       // On file select (from the pop up)
@@ -116,6 +117,8 @@ class CalendarView extends React.Component {
             this.setState({ flag:true})
         }
       }
+
+      displayCalendar = 
     
       // On file upload (click the upload button)
     //   onFileUpload = () => {
@@ -186,20 +189,19 @@ class CalendarView extends React.Component {
                         <div className="mb-5 m-auto">
                             <p>Enter the dates you want to create a youFree for.</p>
 
-                            <form class="needs-validation" action="/create" method="POST" novalidate>
+                            <form action="/create" method="POST" novalidate>
                                 <div class="mb-3">
                                     <label class="form-label" for="username">Start Date:</label>
-                                    <input class="form-control" type="text" name="username" id="username" required/>
+                                    <input class="form-control" type="text" name="startDate" id="startDate" required/>
                                     <div class="invalid-feedback">Please provide a start date.</div> 
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" for="password">End Date:</label>
-                                    <input class="form-control" type="password" name="password" id="password" required/>
+                                    <input class="form-control" type="text" name="endDate" id="endDate" required/>
                                     <div class="invalid-feedback">Please provide an end date.</div> 
                                 </div>
                                 <div class="d-grid d-sm-block text-center">
-                                    <h1>The button doesn't work yet, will try and POST to /create, which doesn't exist</h1>
-                                    <button type="submit" class="btn btn-primary">Create Calendar</button>
+                                    <button type="submit" class="btn btn-primary" onClick={this.displayCalendar}>Create Calendar</button>
                                 </div>
                             </form>
                         </div>
@@ -211,6 +213,9 @@ class CalendarView extends React.Component {
                                 //onClikcDay={this.handleDateChange} 
                                 //value={[this.state.dateStart, this.state.dateEnd]} 
                             />
+                        </div>
+                        <div class="mb-5">
+                            <form action=""
                         </div>
                     </div>
                     <div class="col-md-6 themed-grid-col">
@@ -230,6 +235,9 @@ class CalendarView extends React.Component {
                             hoveredColor={"#ADB2AE"}
                             onChange={this.handleState}
                         />
+                    </div>
+                    <div class="col-md-3 themed-grid-col">
+                        <h3 class="text-center">Click here to </h3>
                     </div>
                 </div>
                 {/* <div>
