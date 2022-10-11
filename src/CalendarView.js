@@ -3,41 +3,11 @@ import ScheduleSelector from "react-schedule-selector";
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
+import Calendar from 'react-calendar';
 import Select from "react-select";
 import icsToJson from 'ics-to-json';
 import Navbar from "./NavBar";
 import axios from 'axios';
-
-function datePicker() {
-    const defaultSelected = {
-        from: pastMonth,
-        to: addDays(pastMonth, 4)
-      };
-      const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
-    
-      let footer = <p>Please pick the first day.</p>;
-      if (range?.from) {
-        if (!range.to) {
-          footer = <p>{format(range.from, 'PPP')}</p>;
-        } else if (range.to) {
-          footer = (
-            <p>
-              {format(range.from, 'PPP')}–{format(range.to, 'PPP')}
-            </p>
-          );
-        }
-      }
-    
-      return (
-        <DayPicker
-          mode="range"
-          defaultMonth={pastMonth}
-          selected={range}
-          footer={footer}
-          onSelect={setRange}
-        />
-      );
-    }
   
 let origSchedule = [new Date('2022-10-01 10:00:00'),
 new Date('2022-10-01 11:00:00'),
@@ -88,30 +58,17 @@ class CalendarView extends React.Component {
         this.state = {
             schedule: [],
             otherSchedule: origSchedule,
-            selectedOption: null,
-            label: "Blank Week",
-            startDate: new Date("10-09-2022"),
-            numDays: 7,
-            dateFormat: "d/m",
+            selectedOption: {
+                label: "Blank Week",
+                startDate: new Date("10-09-2022"),
+                numDays: 7,
+                dateFormat: "d/m"
+            },
             //selectedFile: null,
-            dateValue: []
+            dateStart: new Date("10-02-2022"),
+            dateEnd: new Date("10-04-2022"),
+            flag: true
         }
-
-    // this.display = { 
-    //     selectedOption: null,
-    //     label: "Blank Week",
-    //     startDate: new Date("10-09-2022"),
-    //     numDays: 7,
-    //     dateFormat: "d/m"
-    // };
-
-    // this.state = { schedule: [],
-    //     otherSchedule: origSchedule,
-    //  };
-
-    // this.file = {
-    //     selectedFile: null,
-    //   };
 
       this.onFileChange = this.onFileChange.bind(this);
       this.handleDisplay = this.handleDisplay.bind(this);
@@ -126,7 +83,7 @@ class CalendarView extends React.Component {
         this.setState({ startDate: selectedOption.startDate });
         this.setState({ numDays: selectedOption.numDays });
         this.setState({ dateFormat: selectedOption.dateFormat });
-        //console.log(selectedOption);
+        console.log(selectedOption);
     };
 
     handleState = newSchedule => {
@@ -148,138 +105,145 @@ class CalendarView extends React.Component {
         this.console.log(data)
       };
 
-      handleDateChange = newDays => {
-        this.setState({ dateValue: newDays})
+      handleDateChange = newDay => {
+        console.log(newDay)
+        if (this.flag) {
+            this.setState({ dateStart: newDay});
+            this.setState({ flag:false})
+        }
+        else {
+            this.setState({ dateEnd: newDay});
+            this.setState({ flag:true})
+        }
       }
     
-      
       // On file upload (click the upload button)
-      onFileUpload = () => {
+    //   onFileUpload = () => {
       
-        // Create an object of formData
-        const formData = new FormData();
+    //     // Create an object of formData
+    //     const formData = new FormData();
 
-        console.log("hello from the inside of onFileUpload");
+    //     console.log("hello from the inside of onFileUpload");
       
-        // Update the formData object
-        // formData.append(
-        //   "myFile",
-        //   this.file.selectedFile,
-        //   this.file.selectedFile.name
-        // );
+    //     // Update the formData object
+    //     // formData.append(
+    //     //   "myFile",
+    //     //   this.file.selectedFile,
+    //     //   this.file.selectedFile.name
+    //     // );
       
-        // Details of the uploaded file
-        // console.log("hello");
-        // console.log(this.file.selectedFile);
+    //     // Details of the uploaded file
+    //     // console.log("hello");
+    //     // console.log(this.file.selectedFile);
       
-        // Request made to the backend api
-        // Send formData object
-        // axios.post("api/uploadfile", formData);
-      };
+    //     // Request made to the backend api
+    //     // Send formData object
+    //     // axios.post("api/uploadfile", formData);
+    //   };
       
       // File content to be displayed after
       // file upload is complete
-      fileData = () => {
+    //   fileData = () => {
       
-        if (this.file.selectedFile) {
+    //     if (this.file.selectedFile) {
            
-          return (
-            <div>
-                <h2>File Details:</h2>
-                <p>File Name: {this.file.selectedFile.name}</p>
-                <p>File Type: {this.file.selectedFile.type}</p>
-                <p>
-                    Last Modified:{" "}
-                    {this.file.selectedFile.lastModifiedDate.toDateString()}
-                </p>
-            </div>
-          );
-        } else {
-          return (
-            <div>
-              <br />
-              <h4>Choose before Pressing the Upload button</h4>
-            </div>
-          );
-        }
-      };
+    //       return (
+    //         <div>
+    //             <h2>File Details:</h2>
+    //             <p>File Name: {this.file.selectedFile.name}</p>
+    //             <p>File Type: {this.file.selectedFile.type}</p>
+    //             <p>
+    //                 Last Modified:{" "}
+    //                 {this.file.selectedFile.lastModifiedDate.toDateString()}
+    //             </p>
+    //         </div>
+    //       );
+    //     } else {
+    //       return (
+    //         <div>
+    //           <br />
+    //           <h4>Choose before Pressing the Upload button</h4>
+    //         </div>
+    //       );
+    //     }
+    //   };
       
-
     render() {
 
         return (
             <div>
-                <div className="container">
-                    <Navbar />
-                    <div className="row">
-                        <div className="col-md-3"></div>
-                        <div className="col-md-6">
+                <Navbar />
+                <div class="row justify-content-evenly">
+                    <div className="col-md-3 themed-grid-col">
+                        <div class="mb-5 mt-5 m-auto">
+                            <p>Select the type of youFree you wish to create.</p>
                             <Select
-                                value={this.state.selectedOption} 
+                                value={this.state.selectedOption.label} 
                                 options={values} 
                                 onChange={this.handleDisplay}
                             />
                         </div>
-                        <div className="col-md-4"></div>
+                        <div className="mb-5 m-auto">
+                            <p>Enter the dates you want to create a youFree for.</p>
+
+                            <form class="needs-validation" action="/create" method="POST" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label" for="username">Start Date:</label>
+                                    <input class="form-control" type="text" name="username" id="username" required/>
+                                    <div class="invalid-feedback">Please provide a start date.</div> 
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="password">End Date:</label>
+                                    <input class="form-control" type="password" name="password" id="password" required/>
+                                    <div class="invalid-feedback">Please provide an end date.</div> 
+                                </div>
+                                <div class="d-grid d-sm-block text-center">
+                                    <h1>The button doesn't work yet, will try and POST to /create, which doesn't exist</h1>
+                                    <button type="submit" class="btn btn-primary">Create Calendar</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="mb-5">
+                            {/* Currently just shows the calendar */}
+                            <Calendar 
+                                // returnValue={"range"}
+                                // selectRange={true}
+                                //onClikcDay={this.handleDateChange} 
+                                //value={[this.state.dateStart, this.state.dateEnd]} 
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-6 themed-grid-col">
+                        <h3 class="text-center">My Availability</h3>
+                        <p class="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                        <ScheduleSelector
+                            selection={this.state.schedule}
+                            startDate={this.state.selectedOption.startDate}
+                            numDays={this.state.selectedOption.numDays}
+                            minTime={8}
+                            maxTime={22}
+                            hourlyChunks={4}
+                            dateFormat={this.state.selectedOption.dateFormat}
+                            timeFormat={"h:mm a"}
+                            unselectedColor={"#FA3D24"}
+                            selectedColor={"rgba(80, 182, 51, 1)"}
+                            hoveredColor={"#ADB2AE"}
+                            onChange={this.handleState}
+                        />
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <h3>
                         File Upload using React!
                     </h3>
                     <div>
-                        {/* <input type="file" id="myFile" name="filename" display="none"/> */}
                         <input type="file" onChange={this.onFileChange} />
                         <button onClick={this.onFileUpload}>
                             Upload!
                         </button>
-                    </div>
+                    </div> */}
                     {/* {this.fileData()} */}
-                </div>
-
-                <p>Select the times you're free below!</p>
-                <DatePicker 
-                    returnValue={"range"}
-                    isOpen={true}
-                    onChange={this.handleDateChange} 
-                    value={this.state.dateValue} />
-
-                <div id="message">
-                <h3>My Availability</h3>
-                <p>Click and Drag to Toggle; Saved Immediately</p>
-                </div>
-                <div className="row justify-content-center">
-                <div className="col-6">
-                <ScheduleSelector
-                    selection={this.state.schedule}
-                    startDate={this.state.startDate}
-                    numDays={this.state.numDays}
-                    minTime={8}
-                    maxTime={22}
-                    hourlyChunks={4}
-                    dateFormat={this.state.dateFormat}
-                    timeFormat={"h:mm a"}
-                    unselectedColor={"#FA3D24"}
-                    selectedColor={"rgba(80, 182, 51, 1)"}
-                    hoveredColor={"#ADB2AE"}
-                    onChange={this.handleState}
-                    />
-                </div>
-                {/* <div className="col-6">
-                    <ScheduleSelector
-                    selection={this.state.otherSchedule}
-                    startDate={new Date('2022-10-01')}
-                    numDays={7}
-                    minTime={8}
-                    maxTime={22}
-                    hourlyChunks={4}
-                    timeFormat={"h:mm a"}
-                    unselectedColor={"#FA3D24"}
-                    selectedColor={"rgba(80, 182, 51, 1)"}
-                    hoveredColor={"#ADB2AE"}
-                    />
-                </div> */}
-                </div>
+                {/* </div> */}
             </div>
         );
     }
