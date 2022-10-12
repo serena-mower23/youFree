@@ -21,7 +21,6 @@ const view = function( e ) {
 }
 
 window.onload = function() {
-    console.log("HERE")
     let viewButton = document.querySelectorAll(".view-button")
     viewButton.forEach(element => {
         element.onclick = view

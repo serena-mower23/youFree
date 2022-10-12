@@ -17,13 +17,18 @@ const calendars = [
   ]
 
 class EventGroup extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      events:this.props.events
+    }
+  }
     render() {
         return (
             <div className="mb-5">
-                <h1 className="mb-3">{this.props.title}</h1>
-                {calendars.map( (calendar, index) => 
-                    this.props.owner === calendar.owner &&
-                    <EventCalendar key={index} id={index} title={calendar.title} owner={calendar.owner} />
+                <h1 className="mb-3">{this.props.events.name}</h1>
+                {events.map( (event, index) => 
+                    <EventCalendar key={index} id={index} title={event.title} />
                 )}
             </div>
         )
