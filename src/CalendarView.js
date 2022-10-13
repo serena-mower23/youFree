@@ -2,7 +2,6 @@ import React, { useState} from "react";
 import ScheduleSelector from "react-schedule-selector";
 import Select from "react-select";
 import Navbar from "./NavBar";
-import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 
 const values = [
@@ -70,7 +69,7 @@ class CalendarView extends React.Component {
       this.handleDateChange = this.handleDateChange.bind(this);
       this.handleDaysChange = this.handleDaysChange.bind(this);
       this.handleNumChange = this.handleNumChange.bind(this);
-      this.submitCalendar = this.submitCalendar.bind(this);
+      this.handleCreate = this.handleCreate.bind(this);
     }
       
     handleDisplay = selectedOption => {
@@ -102,19 +101,30 @@ class CalendarView extends React.Component {
         }
     }
 
-    handleCreate = event => {
-        this.setState({})
-        axios.post("/create", {json} )
-        .then(res => {
-            console.log(res.data)
+    handleCreate = e => {
+        // e.preventDefault()
+        const json = {
+            schedule:this.state.schedule,
+            name:this.state.name,
+            dateFormat: this.state.dateFormat,
+            startDate: this.state.startDate,
+            numDays: this.state.numDays
+        }
+        console.log(json)
+        console.log("BAKSH")
+        let body = JSON.stringify(json)
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body
+        };
+        fetch('/create', requestOptions)
+        .then(res => res.json())
+        .then(json => {
+            console.log(json)
         })
     }
-
-    submitCalendar = submit => {
-        for (let i = 0; i < this.state.schedule.length; i++) {
-            // console.log((typeof (this.state.schedule[0])));
-        }
-      }
 
     handleNumChange = newNum => {
         this.setState({ready: false});
@@ -160,7 +170,6 @@ class CalendarView extends React.Component {
                             <div className="mb-5 mt-5m-auto">
                                 <p>Select the type of youFree you wish to create.</p>
                                 <Select
-                                    // value={this.state.label} 
                                     options={values} 
                                     placeholder={this.state.label}
                                     onChange={this.handleDisplay}
@@ -183,16 +192,6 @@ class CalendarView extends React.Component {
                                             <input className="form-control" type="text" name="numberDays" id="numberDays" onChange={this.handleNumChange} required/>
                                             <div className="invalid-feedback">Please provide a number of days.</div> 
                                     </div>
-                                    {/* <div className="mb-3">
-                                        <label className="form-label" htmlFor="minTime">Min Time (1,2,etc):</label>
-                                        <input className="form-control" type="text" name="minTime" id="minTime" onChange={this.handleMinChange} required/>
-                                        <div className="invalid-feedback">Please provide a minimum time.</div> 
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label" htmlFor="maxTime">Max Time (20,21,etc):</label>
-                                        <input className="form-control" type="text" name="maxTime" id="maxTime" onChange={this.handleMaxChange} required/>
-                                        <div className="invalid-feedback">Please provide a maximum time.</div> 
-                                    </div> */}
                                 <div className="d-grid d-sm-block text-center">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update Template</button>
                                 </div>
@@ -202,11 +201,6 @@ class CalendarView extends React.Component {
                             <div className="ms-5">
                                 <h1 className="text-center">{this.state.name}</h1>
                                 <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
-                            </div>
-                            <div className="mb-5 m-auto">
-                                <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,7 +216,6 @@ class CalendarView extends React.Component {
                                 <div className="mb-5 mt-5m-auto">
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
-                                        // value={this.state.label} 
                                         options={values} 
                                         placeholder={this.state.label}
                                         onChange={this.handleDisplay}
@@ -245,16 +238,6 @@ class CalendarView extends React.Component {
                                         <input className="form-control" type="text" name="numberDays" id="numberDays" onChange={this.handleNumChange} required/>
                                         <div className="invalid-feedback">Please provide a number of days.</div> 
                                     </div>
-                                    {/* <div className="mb-3">
-                                        <label className="form-label" htmlFor="minTime">Min Time (1,2,etc):</label>
-                                        <input className="form-control" type="text" name="minTime" id="minTime" onChange={this.handleMinChange} required/>
-                                        <div className="invalid-feedback">Please provide a minimum time.</div> 
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label" htmlFor="maxTime">Max Time (20,21,etc):</label>
-                                        <input className="form-control" type="text" name="maxTime" id="maxTime" onChange={this.handleMaxChange} required/>
-                                        <div className="invalid-feedback">Please provide a maximum time.</div> 
-                                    </div> */}
                                     <div className="d-grid d-sm-block text-center">
                                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update Template</button>
                                     </div>
@@ -264,13 +247,6 @@ class CalendarView extends React.Component {
                                 <div className="ms-5">
                                     <h1 className="text-center">{this.state.name}</h1>
                                     <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
-                                </div>
-                                <div className="mb-5 m-auto">
-                                    <form action="/create" method="POST">
-                                        <div className="d-grid d-sm-block text-center">
-                                            <button type="submit" className="btn btn-primary">Create youFree?</button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -288,7 +264,6 @@ class CalendarView extends React.Component {
                                 <div className="mb-5 mt-5m-auto">
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
-                                        // value={this.state.label} 
                                         options={values} 
                                         placeholder={this.state.label}
                                         onChange={this.handleDisplay}
@@ -311,16 +286,6 @@ class CalendarView extends React.Component {
                                                 <input className="form-control" type="text" name="numberDays" id="numberDays" onChange={this.handleNumChange} required/>
                                                 <div className="invalid-feedback">Please provide a number of days.</div> 
                                         </div>
-                                        {/* <div className="mb-3">
-                                            <label className="form-label" htmlFor="minTime">Min Time (1,2,etc):</label>
-                                            <input className="form-control" type="text" name="minTime" id="minTime" onChange={this.handleMinChange} required/>
-                                            <div className="invalid-feedback">Please provide a minimum time.</div> 
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label" htmlFor="maxTime">Max Time (20,21,etc):</label>
-                                            <input className="form-control" type="text" name="maxTime" id="maxTime" onChange={this.handleMaxChange} required/>
-                                            <div className="invalid-feedback">Please provide a maximum time.</div> 
-                                        </div> */}
                                     <div className="d-grid d-sm-block text-center">
                                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update Template</button>
                                     </div>
@@ -334,7 +299,7 @@ class CalendarView extends React.Component {
                                 <div className="mb-5 m-auto">
                                     <form action="/create" method="POST">
                                         <div className="d-grid d-sm-block text-center">
-                                            <button type="submit" className="btn btn-primary">Create youFree?</button>
+                                            <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
                                     </form>
                                 </div>
@@ -359,7 +324,6 @@ class CalendarView extends React.Component {
                                 <div className="mb-5 mt-5m-auto">
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
-                                        // value={this.state.label} 
                                         options={values} 
                                         placeholder={this.state.label}
                                         onChange={this.handleDisplay}
@@ -382,16 +346,6 @@ class CalendarView extends React.Component {
                                         <input className="form-control" type="text" name="numberDays" id="numberDays" onChange={this.handleNumChange} required/>
                                         <div className="invalid-feedback">Please provide a number of days.</div> 
                                     </div>
-                                    {/* <div className="mb-3">
-                                        <label className="form-label" htmlFor="minTime">Min Time (1,2,etc):</label>
-                                        <input className="form-control" type="text" name="minTime" id="minTime" onChange={this.handleMinChange} required/>
-                                        <div className="invalid-feedback">Please provide a minimum time.</div> 
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label" htmlFor="maxTime">Max Time (20,21,etc):</label>
-                                        <input className="form-control" type="text" name="maxTime" id="maxTime" onChange={this.handleMaxChange} required/>
-                                        <div className="invalid-feedback">Please provide a maximum time.</div> 
-                                    </div> */}
                                     <div className="d-grid d-sm-block text-center">
                                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update Template</button>
                                     </div>
@@ -405,7 +359,7 @@ class CalendarView extends React.Component {
                                 <div className="mb-5 m-auto">
                                     <form action="/create" method="POST">
                                         <div className="d-grid d-sm-block text-center">
-                                            <button type="submit" className="btn btn-primary">Create youFree?</button>
+                                            <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
                                     </form>
                                 </div>
@@ -414,8 +368,6 @@ class CalendarView extends React.Component {
                                         startDate={this.state.startDate} 
                                         numDays={this.state.numDays}
                                         dateFormat={this.state.dateFormat}
-                                        // minTime={this.state.minTime}
-                                        // maxTime={this.state.maxTime}
                                         parentCallBack = {this.handleCallBack}
                                     />
                                 </div>

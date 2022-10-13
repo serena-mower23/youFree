@@ -1,21 +1,20 @@
 import React from "react";
 import Navbar from "./NavBar";
 import ScheduleSelector from "react-schedule-selector";
-import axios from "axios"
 
 class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            schedule: [],
-            startDate: props.location.startDate,
-            numDays: props.location.numDays,
-            dateFormat: props.location.dateFormat,
-            creator: props.location.creator,
-            availableTime: props.location.availableTime,
-            users: props.location.users,
-            youFreeID: props.location.youFreeID,
-            availableTime: props.location.availableTime,
+            // schedule: [],
+            // startDate: props.location.startDate,
+            // numDays: props.location.numDays,
+            // dateFormat: props.location.dateFormat,
+            // creator: props.location.creator,
+            // availableTime: props.location.availableTime,
+            // users: props.location.users,
+            // youFreeID: props.location.youFreeID,
+            // availableTime: props.location.availableTime,
             ready: false
         }
 
@@ -31,9 +30,8 @@ class EditView extends React.Component {
         console.log(this.state.schedule);
     }
 
-    componentDidMount() {
-        e.preventDefault();
-
+    componentDidMount = ( e ) => {
+        // e.preventDefault()
         const id = props.location.youFreeID
         const creator = rops.location.creator
 
@@ -41,17 +39,27 @@ class EditView extends React.Component {
             id: id,
             creator:creator
         }
-        
-        axios.post("/getAvail", {json} )
-        .then(res => {
-            console.log(res.data.schedule)
-            this.setState({ schedule: res.data.schedule })
+
+        let body = JSON.stringify(json)
+
+        fetch("/grabAvail", {
+            method:'POST',
+            body,
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
-        .then(res=> this.setState({ready:true}))
+        .then(res => res.json())
+        .then(json => {
+            console.log(json.schedule)
+            this.setState({ schedule: json.schedule })
+            this.setState({ready:true})
+        })
+
     }
 
     render() {
-        this.componentDidMount()
+        // this.componentDidMount()
         if (this.state.ready) {
             if (props.location.creator === currentUser) {
                 return (
@@ -59,7 +67,7 @@ class EditView extends React.Component {
                         <Navbar />
                         <div className="col-md-6 themed-grid-col">
                             <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
-                            <ScheduleSelector
+                            {/* <ScheduleSelector
                                 selection={this.state.schedule}
                                 startDate={props.location.startDate}
                                 numDays={props.location.numDays}
@@ -72,7 +80,7 @@ class EditView extends React.Component {
                                 selectedColor={"rgba(80, 182, 51, 1)"}
                                 hoveredColor={"#ADB2AE"}
                                 onChange={this.handleState}
-                            />
+                            /> */}
                         </div>
                         <div className="col-md-3 themed-grid-col">
                             <form action="/create" method="PUT">
@@ -91,7 +99,7 @@ class EditView extends React.Component {
                         <Navbar />
                         <div className="col-md-6 themed-grid-col">
                             <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
-                            <ScheduleSelector
+                            {/* <ScheduleSelector
                                 selection={this.state.schedule}
                                 startDate={props.location.startDate}
                                 numDays={props.location.numDays}
@@ -104,7 +112,7 @@ class EditView extends React.Component {
                                 selectedColor={"rgba(80, 182, 51, 1)"}
                                 hoveredColor={"#ADB2AE"}
                                 onChange={this.handleState}
-                            />
+                            /> */}
                         </div>
                         <div className="col-md-3 themed-grid-col">
                             <form action="/create" method="PUT">

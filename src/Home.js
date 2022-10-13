@@ -1,4 +1,3 @@
-import axios from "axios";
 import React from "react";
 import EventGroup from "./EventGroup";
 import Navbar from "./NavBar";
@@ -13,19 +12,23 @@ class Home extends React.Component {
         }
         this.handleNewUser = this.handleNewUser.bind(this);
     }
-
-    handleLoad = () => {
-        axios.get("/eventsYF" )
-        .then(res => {
-            this.setState({ created: res.data.created })
-            this.setState({ invited: res.data.invited })
+    
+    componentDidMount = (e) => {
+        // e.preventDefault()
+        window.addEventListener('load', this.handleNewUser);
+        fetch("/eventsYF", {
+            method:'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(json => {
+            this.setState({ created: json.created })
+            this.setState({ invited: json.invited })
             this.setState({ ready: true})
         })
-    }
 
-    componentDidMount() {
-        window.addEventListener('load', this.handleNewUser);
-        this.handleLoad()
         // fetch("/eventsYF", {
         //     method: "POST"
         // })
@@ -35,8 +38,6 @@ class Home extends React.Component {
         //     this.setState({ invited: data.invited })
         // })
         // .then(res => this.setState({ ready: true}))
-
-    
     }
 
     handleNewUser() {

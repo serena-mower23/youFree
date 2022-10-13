@@ -67,7 +67,7 @@ app.post('/login', (req, res) => {
     } else {
       newUser = true
       req.body.data = []
-      console.log(req.body.data)                   //SDFJHSDLKFJHHFD
+      console.log(req.body.data)                   //NEED TO FINISH
       userCollection.insertOne( req.body )
       res.redirect('http://localhost:8080/home')
     }
@@ -110,6 +110,7 @@ app.post('/newuser', (req, res) => {
 })
 
 app.post('/create', async (req, res) => {
+  console.log("HEHE")
   console.log(req.body)
   const json = {
     name: req.body.name,
