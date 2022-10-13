@@ -27,6 +27,8 @@ const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnified
 let userCollection = null;
 let youFreeCollection = null;
 let currentUser = null;
+let newUser = false
+let totalYouFrees = 0;
 
 //connect to database and grab collection
 app.use( cookie({
@@ -54,15 +56,18 @@ app.post('/login', (req, res) => {
 
     if (result.length > 0) {
       if (req.body.password === result[0].password) {
+        newUser = false
         req.session.login = true
         currentUser = req.session.username
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
+        newUser = false
         // stay at login page
         res.redirect('http://localhost:8080')
       }
     } else {
+      newUser = true
       req.body.created = []
       req.body.invited = []
       console.log(req.body)
@@ -100,11 +105,16 @@ client.connect()
 app.post('/view', (req, res) => {
   console.log("/view request: ")
   console.log(req.body)
-  youFreeCollection.find({"username": currentUser})
+  youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+  // youFreeCollection.find({"username": currentUser})
   .toArray()
   .then(result => {
-    res.json({})
+    res.json(result)
   }).then( json => console.log(json))
+})
+
+app.post('/newuser', (req, res) => {
+  res.json({newUser: newUser})
 })
 
 app.post('/create', async (req, res) => {
@@ -171,6 +181,30 @@ app.get('/eventsYF', async function(req, res) {
   res.json(body);
 })
 
+// app.post('/eventsYF', async function(req, res) {
+//   let createdArray = [];
+//   let invitedArray = [];
+//   const current = await userCollection.find({"username":currentUser}).toArray()
+//   const curCreated = current[0] === null ? null : current[0].created
+//   const curInvited = current[0] === null ? null : current[0].invited
+
+  // for (let i=0; i < curCreated.length; i++) {
+  //   let cur = await youFreeCollection.findOne({"youFreeID": curCreated[i].youFreeID});
+  //   createdArray.push(cur)
+  // }
+
+  // for (let i=0; i < curInvited.length; i++) {
+  //   let cur = await youFreeCollection.findOne({"youFreeID": curInvited[i].youFreeID});
+  //   invitedArray.push(cur)
+  // }
+
+//   let result = {
+//     "created": curCreated,
+//     "invited": curInvited
+//   }
+//   res.json(result);
+// })
+
 app.post('/getAvail', async function(req, res) {
   console.log("/getAvail request: ")
   console.log(req.body)
@@ -189,6 +223,102 @@ app.post('/getAvail', async function(req, res) {
     }
   }
   res.json(selection);
+})
+
+/*
+  if creator:
+    - delete youFree object
+    - remove object with youFreeID from creator's created list
+    - remove object with youFreeID from invited list for each participant
+  if participant:
+    - remove participant name from object with youFreeID
+    - remove object with youFreeID from invited list
+    
+  Need:
+    - youFreeID
+    - creator name
+    - current user
+*/
+app.post('/delete', (req, res) => {
+  if (req.session.username === req.body.creator) {
+    // the current user is the event creator
+    youFreeCollection.deleteOne({_id: mongodb.ObjectId(req.body.youFreeID)})
+
+    // remove event from creator
+    userCollection.find({username: req.body.creator})
+    .toArray()
+    .then(result => {
+      let created = result[0].created
+      for (let i = 0; i < created.length; i++) {
+        if (created[i].youFreeID === req.body.youFreeID) {
+          // remove event from creator's list
+          created.splice(i, 1)
+        }
+      }
+      // update the collection
+      userCollection.updateOne(
+        {username: req.body.creator},
+        {$set: {created: created}}
+      )
+    })
+
+    // remove event from all participants
+    userCollection.find({})
+    .toArray()
+    .then(result => {
+      for (let i = 0; i < result.length; i++) {
+        let username = result[i].username
+        let invited = result[i].invited
+        for (let j = 0; j < invited.length; j++) {
+          if (invited[j].youFreeID === req.body.youFreeID) {
+            // remove event from participant's list
+            invited.splice(j, 1)
+          }
+        }
+        // update the collection
+        userCollection.updateOne(
+          {username: username},
+          {$set: {invited: invited}}
+        )
+      }
+    })
+  } else {
+    // the current user is not the event creator
+    youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+    .toArray()
+    .then(result => {
+      let users = result[0].users
+      for (let i = 0; i < users.length; i++) {
+        if (users[i] === req.session.username) {
+          // remove current user from user list
+          users.splice(i, 1)
+        }
+      }
+      // update the collection
+      youFreeCollection.updateOne(
+        {_id: mongodb.ObjectId(req.body.youFreeID)},
+        {$set: {users: users}}
+      )
+    })
+
+    // find the current user and delete the event from their invited list
+    userCollection.find({username: req.session.username})
+    .toArray()
+    .then(result => {
+      let invited = result[0].invited
+      for (let i = 0; i < invited.length; i++) {
+        if (invited[i].youFreeID === req.body.youFreeID) {
+          // remove current user from user list
+          invited.splice(i, 1)
+        }
+      }
+      // update the collection
+      userCollection.updateOne(
+        {username: req.session.username},
+        {$set: {invited: invited}}
+      )
+    })
+  }
 })
 
 app.post('/grabName', async function(req, res) {

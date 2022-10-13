@@ -8,12 +8,17 @@ class EventCalendar extends React.Component {
             ready: false
         }
 
-        this.handleClick = this.handleClick.bind(this)
+        this.handleView = this.handleView.bind(this)
         this.handleLoad = this.handleLoad.bind(this)
     }
 
-    handleClick( e ) {
+    handleView( e ) {
+        // handleView( e, id )
         e.preventDefault()
+
+        // const json = {
+        //     youFreeID: id
+        // }
 
         const json = {
             "youFreeID": this.props.event.youFreeID
@@ -25,13 +30,32 @@ class EventCalendar extends React.Component {
             body,
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body
         })
         window.location.href = "http://localhost:8080/edit-calendar"
     }
 
-    handleLoad = e => {
+    handleDelete( e, id, creator ) {
         e.preventDefault()
+
+        const json = {
+            youFreeID: id,
+            creator: creator
+        }
+        let body = JSON.stringify(json)
+
+        fetch('/delete', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body
+        })
+    }
+
+    componentDidMount( e ) {
+        // e.preventDefault()
         const json = {
             "youFreeID": this.props.event.youFreeID
         }
@@ -62,8 +86,8 @@ class EventCalendar extends React.Component {
                     <div className="card-body">
                         <h5 className="card-title d-inline">{this.state.name}</h5>
                         <div className="d-md-flex justify-content-md-end">
-                        <button className="btn btn-primary view-button" type="submit" onClick={this.handleClick}>View</button>
-                            <button className="btn btn-danger ms-1">Delete</button>
+                            <button className="btn btn-primary view-button" type="submit" onClick={(e) => this.handleView(e, this.props.youFreeID)}>View</button>
+                            <button className="btn btn-danger ms-1" onClick={(e) => this.handleDelete(e, this.props.youFreeID, this.props.creator)}>Delete</button>
                         </div>
                     </div>
                 </div>
