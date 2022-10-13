@@ -8,8 +8,6 @@ class EventGroup extends React.Component {
             events: this.props.events,
         }
     }
-
-
     render() {
         return (
             <div className="mb-5">

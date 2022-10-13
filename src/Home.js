@@ -1,4 +1,3 @@
-import axios from "axios";
 import React from "react";
 import EventGroup from "./EventGroup";
 import Navbar from "./NavBar";
@@ -11,20 +10,22 @@ class Home extends React.Component {
             invited: [],
             ready: false
         }
-
     }
-
-    handleLoad = () => {
-        axios.get("/eventsYF" )
-        .then(res => {
-            this.setState({ created: res.data.created })
-            this.setState({ invited: res.data.invited })
+    
+    componentDidMount = (e) => {
+        // e.preventDefault()
+        fetch("/eventsYF", {
+            method:'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(json => {
+            this.setState({ created: json.created })
+            this.setState({ invited: json.invited })
             this.setState({ ready: true})
         })
-    }
-
-    componentDidMount() {
-        this.handleLoad()
     }
 
     render() {
