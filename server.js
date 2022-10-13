@@ -67,6 +67,7 @@ app.post('/login', (req, res) => {
     } else {
       newUser = true
       req.body.data = []
+      console.log(req.body.data)                   //SDFJHSDLKFJHHFD
       userCollection.insertOne( req.body )
       res.redirect('http://localhost:8080/home')
     }
@@ -97,6 +98,7 @@ client.connect()
 
 app.post('/view', (req, res) => {
   youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+  // youFreeCollection.find({"username": currentUser})
   .toArray()
   .then(result => {
     res.json(result)
@@ -108,20 +110,35 @@ app.post('/newuser', (req, res) => {
 })
 
 app.post('/create', async (req, res) => {
-  console.log("hello?")
   console.log(req.body)
-  const scheudleVal = req.body.scheudle;
-  const creator = req.body.creator;
-  const youFreeID = totalYouFrees;
-  totalYouFrees += 1;
-  const current = await userCollection.findOne({"username": creator})
-  let currentArray = current.created
-  currentArray.push(youFreeID)
-  await userCollection.updateOne(
-    {username:creator}),
-    { $set: {"created": currentArray}}
+  const json = {
+    name: req.body.name,
+    users: [],
+    creator: currentUser,
+    availableTimes: [],
+    dateFormat: req.body.dateFormat,
+    numDays: req.body.numDays,
+    youFreeID: ""
+  }
+  await youFreeCollection.insertOne(json)
+  const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": currentUser}] })
+  const id = result._id.toString()
+  await youFreeCollection.updateOne({$and: [{"name" :req.body.name}, {"creator": currentUser}] }, {$set: {"youFreeID": id}})
 
-  youFreeCollection.insertOne()
+  const current = await userCollection.findOne({"username": currentUser})
+  currentArray = current.created
+  const update = {
+    youFreeID: id, 
+    userAvail:[]
+  }
+  currentArray.push(update)
+
+  await userCollection.updateOne(
+    {"username": currentUser},
+    { $set: {"created": currentArray}}
+  )
+
+  res.redirect('http://localhost:8080/home')
 })
 
 app.get('/loadYF', async function(req, res) {
@@ -140,19 +157,15 @@ app.get('/eventsYF', async function(req, res) {
   const curCreated = current.created
   const curInvited = current.invited
 
-  for (let i=0; i < curCreated.length; i++) {
-    let cur = await youFreeCollection.findOne({"youFreeID": curCreated[i].youFreeID});
-    createdArray.push(cur)
-  }
-
-  for (let i=0; i < curInvited.length; i++) {
-    let cur = await youFreeCollection.findOne({"youFreeID": curInvited[i].youFreeID});
-    invitedArray.push(cur)
-  }
+  // for (let i = 0; i < curCreated.length; i++) {
+  //   let id = curCreated[i].youFreeID 
+  //   const result = await youFreeCollection.findOne({"_id": id})   
+  //   let objString = c[i]._id.toString()
+  // }
 
   let body = {
-    "created": createdArray,
-    "invited": invitedArray
+    "created": curCreated,
+    "invited": curInvited
   }
   res.json(body);
 })
@@ -293,6 +306,18 @@ app.post('/delete', (req, res) => {
       )
     })
   }
+})
+
+app.post('/grabName', async function(req, res) {
+  const current = await youFreeCollection.find({}).toArray()
+  let sendName = ""
+  for (let i = 0; i < current.length; i++) {
+    let objString = current[i]._id.toString()
+    if (objString === req.body.youFreeID) {
+      sendName = current[i].name
+    }
+  }
+  res.json(sendName)
 })
 
 app.get('/*', function(req, res) {

@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "./NavBar";
 import ScheduleSelector from "react-schedule-selector";
+import axios from "axios"
 
 class EditView extends React.Component {
     constructor(props) {

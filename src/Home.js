@@ -11,11 +11,21 @@ class Home extends React.Component {
             invited: [],
             ready: false
         }
-        this.handleLoad = this.handleLoad.bind(this);
+        this.handleNewUser = this.handleNewUser.bind(this);
+    }
+
+    handleLoad = () => {
+        axios.get("/eventsYF" )
+        .then(res => {
+            this.setState({ created: res.data.created })
+            this.setState({ invited: res.data.invited })
+            this.setState({ ready: true})
+        })
     }
 
     componentDidMount() {
-        window.addEventListener('load', this.handleLoad);
+        window.addEventListener('load', this.handleNewUser);
+        this.handleLoad()
         // fetch("/eventsYF", {
         //     method: "POST"
         // })
@@ -26,15 +36,10 @@ class Home extends React.Component {
         // })
         // .then(res => this.setState({ ready: true}))
 
-        axios.get("/eventsYF" )
-        .then(res => {
-            this.setState({ created: res.data.created })
-            this.setState({ invited: res.data.invited })
-        })
-        .then(res => this.setState({ ready: true}))
+    
     }
 
-    handleLoad() {
+    handleNewUser() {
         let body = ""
         fetch( '/newuser', {
           method:'POST',

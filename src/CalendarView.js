@@ -10,6 +10,7 @@ const values = [
     {label: "Blank Week", weekType: 1, dateFormat: "ddd"},
 ]
 
+
 class Template extends React.Component {
     constructor(props) {
         super(props)
@@ -69,8 +70,6 @@ class CalendarView extends React.Component {
       this.handleDateChange = this.handleDateChange.bind(this);
       this.handleDaysChange = this.handleDaysChange.bind(this);
       this.handleNumChange = this.handleNumChange.bind(this);
-    //   this.handleMinChange = this.handleMinChange.bind(this);
-    //   this.handleMaxChange = this.handleMaxChange.bind(this);
       this.submitCalendar = this.submitCalendar.bind(this);
     }
       
@@ -84,7 +83,7 @@ class CalendarView extends React.Component {
     handleCallBack = (newSchedule) => {
         this.setState({ schedule: newSchedule })
     }
-
+  
     handleUpdate = () => {
         this.setState({ ready: true });
     }
@@ -104,14 +103,7 @@ class CalendarView extends React.Component {
     }
 
     handleCreate = event => {
-        const json = {
-            schedule:this.state.schedule,
-            name:this.state.name,
-            dateFormat: this.state.dateFormat,
-            startDate: this.state.startDate,
-            numDays: this.state.numDays, 
-        }
-        
+        this.setState({})
         axios.post("/create", {json} )
         .then(res => {
             console.log(res.data)
@@ -123,20 +115,6 @@ class CalendarView extends React.Component {
             // console.log((typeof (this.state.schedule[0])));
         }
       }
-
-    // handleMinChange = newMin => {
-    //     this.setState({ready: false})
-    //     console.log("newMin: " + newMin.minTime);
-    //     this.setState({minTime: newMin.target.value});
-    //     console.log("state minTime: " + this.state.minTime);
-    // }
-
-    // handleMaxChange = newMax => {
-    //     this.setState({ready: false});
-    //     console.log("newMax: " + newMax);
-    //     this.setState({maxTime: newMax.target.value})
-    //     console.log("state maxTime: " + this.state.maxTime);
-    // }
 
     handleNumChange = newNum => {
         this.setState({ready: false});
@@ -365,8 +343,6 @@ class CalendarView extends React.Component {
                                     startDate={this.state.startDate} 
                                     numDays={this.state.numDays}
                                     dateFormat={this.state.dateFormat}
-                                    // minTime={this.state.minTime}
-                                    // maxTime={this.state.maxTime}
                                     parentCallBack = {this.handleCallBack}
                                 />
                             </div>
