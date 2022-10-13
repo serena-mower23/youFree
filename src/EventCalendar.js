@@ -56,17 +56,17 @@ class EventCalendar extends React.Component {
         axios.post("/grabName", {youFreeID: this.props.event.youFreeID})
         .then(res => {
             this.setState({ name: res.data.name })
+            this.setState({ ready: true})
         })
-        .then(res => this.setState({ ready: true}))
     }
 
     render() {
-        // this.componentDidMount()
+        this.componentDidMount()
         if (this.state.ready) {
             return (
                 <div className="card mb-3">
                     <div className="card-body">
-                        {/* <h5 className="card-title d-inline">{this.state.name}</h5> */}
+                        <h5 className="card-title d-inline">{this.state.name}</h5>
                         <div className="d-md-flex justify-content-md-end">
                         <button className="btn btn-primary view-button" type="submit" onClick={this.handleClick}>View</button>
                             <button className="btn btn-danger ms-1">Delete</button>
@@ -74,9 +74,6 @@ class EventCalendar extends React.Component {
                     </div>
                 </div>
             )
-        }
-        else {
-            <h1>HI</h1>
         }
     }
 }

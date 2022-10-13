@@ -14,14 +14,17 @@ class Home extends React.Component {
 
     }
 
-    componentDidMount() {
-        axios.post("/eventsYF", {} )
+    handleLoad = () => {
+        axios.get("/eventsYF" )
         .then(res => {
             this.setState({ created: res.data.created })
             this.setState({ invited: res.data.invited })
-            console.log("FUCK")
+            this.setState({ ready: true})
         })
-        .then(res => this.setState({ ready: true}))
+    }
+
+    componentDidMount() {
+        this.handleLoad()
     }
 
     render() {
