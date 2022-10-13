@@ -41,13 +41,20 @@ class EventCalendar extends React.Component {
         }
     }
 
-    handleClick( e ) {
+    handleView( e, id ) {
         e.preventDefault()
+
+        const json = {
+            youFreeID: id
+        }
+        let body = JSON.stringify(json)
+
         fetch('/view', {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body
         })
         // .then(response => response.json())
         // .then(json => {
@@ -56,14 +63,32 @@ class EventCalendar extends React.Component {
         window.location.href = "http://localhost:8080/edit-calendar"
     }
 
+    handleDelete( e, id, creator ) {
+        e.preventDefault()
+
+        const json = {
+            youFreeID: id,
+            creator: creator
+        }
+        let body = JSON.stringify(json)
+
+        fetch('/delete', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body
+        })
+    }
+
     render() {
         return (
             <div className="card mb-3">
                 <div className="card-body">
                     <h5 className="card-title d-inline">{this.props.name}</h5>
                     <div className="d-md-flex justify-content-md-end">
-                    <button className="btn btn-primary view-button" type="submit" onClick={this.handleClick}>View</button>
-                        <button className="btn btn-danger ms-1">Delete</button>
+                        <button className="btn btn-primary view-button" type="submit" onClick={(e) => this.handleView(e, this.props.youFreeID)}>View</button>
+                        <button className="btn btn-danger ms-1" onClick={(e) => this.handleDelete(e, this.props.youFreeID, this.props.creator)}>Delete</button>
                     </div>
                 </div>
             </div>

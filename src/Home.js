@@ -16,6 +16,16 @@ class Home extends React.Component {
 
     componentDidMount() {
         window.addEventListener('load', this.handleLoad);
+        // fetch("/eventsYF", {
+        //     method: "POST"
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     this.setState({ created: data.created })
+        //     this.setState({ invited: data.invited })
+        // })
+        // .then(res => this.setState({ ready: true}))
+
         axios.get("/eventsYF" )
         .then(res => {
             this.setState({ created: res.data.created })
