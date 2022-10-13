@@ -27,6 +27,7 @@ const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnified
 let userCollection = null;
 let youFreeCollection = null;
 let currentUser = null;
+let newUser = false
 let totalYouFrees = 0;
 
 //connect to database and grab collection
@@ -53,15 +54,18 @@ app.post('/login', (req, res) => {
 
     if (result.length > 0) {
       if (req.body.password === result[0].password) {
+        newUser = false
         req.session.login = true
         currentUser = req.session.username
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
+        newUser = false
         // stay at login page
         res.redirect('http://localhost:8080')
       }
     } else {
+      newUser = true
       req.body.data = []
       userCollection.insertOne( req.body )
       res.redirect('http://localhost:8080/home')
@@ -97,6 +101,10 @@ app.post('/view', (req, res) => {
   .then(result => {
     res.json({})
   })
+})
+
+app.post('/newuser', (req, res) => {
+  res.json({newUser: newUser})
 })
 
 app.post('/create', async (req, res) => {
