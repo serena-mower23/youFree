@@ -102,7 +102,7 @@ class CalendarView extends React.Component {
     }
 
     handleCreate = e => {
-        // e.preventDefault()
+        e.preventDefault()
         const json = {
             schedule:this.state.schedule,
             name:this.state.name,
@@ -126,7 +126,7 @@ class CalendarView extends React.Component {
         })
     }
 
-    handleNumChange = newNum => {
+    handleNumChange = (newNum) => {
         this.setState({ready: false});
         this.setState({numDays: newNum.target.value})
     }

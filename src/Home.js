@@ -10,10 +10,12 @@ class Home extends React.Component {
             invited: [],
             ready: false
         }
+
+        this.handleLoad = this.handleLoad.bind(this)
+        this.componentDidMount = this.componentDidMount(this)
     }
-    
-    componentDidMount = (e) => {
-        // e.preventDefault()
+    handleLoad = e => {
+        // preventDefault()
         fetch("/eventsYF", {
             method:'GET',
             headers: {
@@ -27,9 +29,12 @@ class Home extends React.Component {
             this.setState({ ready: true})
         })
     }
+    
+    componentDidMount() {
+        this.handleLoad()
+    }
 
     render() {
-        this.componentDidMount()
         if (this.state.ready) {
             return (
                 <div className="container">

@@ -7,10 +7,13 @@ class EventCalendar extends React.Component {
             name: "Holder", 
             ready: false
         }
+
+        this.handleClick = this.handleClick.bind(this)
+        this.handleLoad = this.handleLoad.bind(this)
     }
 
     handleClick( e ) {
-        // e.preventDefault()
+        e.preventDefault()
 
         const json = {
             "youFreeID": this.props.event.youFreeID
@@ -24,15 +27,11 @@ class EventCalendar extends React.Component {
                 'Content-Type': 'application/json'
             }
         })
-        // .then(response => response.json())
-        // .then(json => {
-            
-        // })
         window.location.href = "http://localhost:8080/edit-calendar"
     }
 
-    componentDidMount( e ) {
-        // e.preventDefault()
+    handleLoad = e => {
+        e.preventDefault()
         const json = {
             "youFreeID": this.props.event.youFreeID
         }
@@ -52,8 +51,11 @@ class EventCalendar extends React.Component {
         })
     }
 
+    componentDidMount() {
+        this.handleLoad
+    }
+
     render() {
-        this.componentDidMount()
         if (this.state.ready) {
             return (
                 <div className="card mb-3">

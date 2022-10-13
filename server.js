@@ -44,6 +44,8 @@ client.connect()
 })
 
 app.post('/login', (req, res) => {
+  console.log("/login request: ")
+  console.log(req.body)
   userCollection.find({username: req.body.username})
   .toArray()
   .then(result => {
@@ -61,8 +63,10 @@ app.post('/login', (req, res) => {
         res.redirect('http://localhost:8080')
       }
     } else {
-      req.body.data = []
-      console.log(req.body.data)                   //NEED TO FINISH
+      req.body.created = []
+      req.body.invited = []
+      console.log(req.body)
+      currentUser = req.session.username
       userCollection.insertOne( req.body )
       res.redirect('http://localhost:8080/home')
     }
@@ -70,6 +74,8 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/logout', (req, res, next) => {
+  console.log("/logout request: ")
+  console.log(req.body)
   req.session.login = false
   next()
 })
@@ -92,15 +98,17 @@ client.connect()
 })
 
 app.post('/view', (req, res) => {
+  console.log("/view request: ")
+  console.log(req.body)
   youFreeCollection.find({"username": currentUser})
   .toArray()
   .then(result => {
     res.json({})
-  })
+  }).then( json => console.log(json))
 })
 
 app.post('/create', async (req, res) => {
-  console.log("HEHE")
+  console.log("/create request: ")
   console.log(req.body)
   const json = {
     name: req.body.name,
@@ -133,6 +141,8 @@ app.post('/create', async (req, res) => {
 })
 
 app.get('/loadYF', async function(req, res) {
+  console.log("/loadYFrequest: ")
+  console.log(req.body)
   const data = await youFreeCollection.find({ }).toArray()
   let body = {
     currentUser: currentUser,
@@ -142,26 +152,28 @@ app.get('/loadYF', async function(req, res) {
 })
 
 app.get('/eventsYF', async function(req, res) {
+  console.log("/eventsYF request: ")
+  console.log(req.body)
   let createdArray = [];
   let invitedArray = [];
   const current = await userCollection.findOne({"username":currentUser})
-  const curCreated = current.created
-  const curInvited = current.invited
-
-  // for (let i = 0; i < curCreated.length; i++) {
-  //   let id = curCreated[i].youFreeID 
-  //   const result = await youFreeCollection.findOne({"_id": id})   
-  //   let objString = c[i]._id.toString()
-  // }
-
+  if (current.created !== null) {
+    createdArray = current.created
+  }
+  if (current.invited !== null) {
+    invitedArray = current.invited
+  }
+  
   let body = {
-    "created": curCreated,
-    "invited": curInvited
+    "created": createdArray,
+    "invited": invitedArray
   }
   res.json(body);
 })
 
 app.post('/getAvail', async function(req, res) {
+  console.log("/getAvail request: ")
+  console.log(req.body)
   let selection = []
   let event = []
   const current = await userCollection.findOne({"username":currentUser})
@@ -180,6 +192,8 @@ app.post('/getAvail', async function(req, res) {
 })
 
 app.post('/grabName', async function(req, res) {
+  console.log("/grabName request: ")
+  console.log(req.body)
   const current = await youFreeCollection.find({}).toArray()
   let sendName = ""
   for (let i = 0; i < current.length; i++) {
