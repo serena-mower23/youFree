@@ -23,7 +23,6 @@ class Template extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
-        console.log(this.state.schedule);
     }
 
     render() {
@@ -84,7 +83,6 @@ class CalendarView extends React.Component {
 
     handleCallBack = (newSchedule) => {
         this.setState({ schedule: newSchedule })
-        console.log(this.state.schedule);
     }
 
     handleUpdate = () => {
