@@ -7,23 +7,5 @@ const root = createRoot(document.getElementById("root"));
 root.render(
     <BrowserRouter>
         <App />
-    </BrowserRouter>  
+    </BrowserRouter>
 );
-
-const view = function( e ) {
-    e.preventDefault()
-    fetch('/view', {
-        method:'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-}
-
-window.onload = function() {
-    console.log("HERE")
-    let viewButton = document.querySelectorAll(".view-button")
-    viewButton.forEach(element => {
-        element.onclick = view
-    });
-}

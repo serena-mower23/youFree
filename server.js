@@ -83,9 +83,11 @@ app.use( function(req, res, next) {
 //   });
 
 app.post('/view', (req, res) => {
-  console.log("in view post")
-  res.redirect('http://localhost:8080/edit-calendar')
-  console.log("in view post 2")
+  collection.find({username: ""})
+  .toArray()
+  .then(result => {
+    res.json({})
+  })
 })
 
 app.get('/*', function(req, res) {
