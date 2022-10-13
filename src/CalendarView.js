@@ -103,6 +103,27 @@ class CalendarView extends React.Component {
         }
     }
 
+    handleCreate = event => {
+        const json = {
+            schedule:this.state.schedule,
+            name:this.state.name,
+            dateFormat: this.state.dateFormat,
+            startDate: this.state.startDate,
+            numDays: this.state.numDays, 
+        }
+        
+        axios.post("/create", {json} )
+        .then(res => {
+            console.log(res.data)
+        })
+    }
+
+    submitCalendar = submit => {
+        for (let i = 0; i < this.state.schedule.length; i++) {
+            // console.log((typeof (this.state.schedule[0])));
+        }
+      }
+
     // handleMinChange = newMin => {
     //     this.setState({ready: false})
     //     console.log("newMin: " + newMin.minTime);
@@ -149,12 +170,6 @@ class CalendarView extends React.Component {
                 break;
         }
     }
-
-    submitCalendar = submit => {
-    for (let i = 0; i < this.state.schedule.length; i++) {
-        // console.log((typeof (this.state.schedule[0])));
-    }
-  }
 
     render() {
         if (this.state.ready === false) {
@@ -211,11 +226,9 @@ class CalendarView extends React.Component {
                                 <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
                             </div>
                             <div className="mb-5 m-auto">
-                                <form action="/create" method="POST">
-                                    <div className="d-grid d-sm-block text-center">
-                                        <button type="submit" className="btn btn-primary">Create youFree?</button>
-                                    </div>
-                                </form>
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
+                                </div>
                             </div>
                         </div>
                     </div>

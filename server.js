@@ -98,6 +98,7 @@ app.post('/view', (req, res) => {
 })
 
 app.post('/create', async (req, res) => {
+  console.log("hello?")
   console.log(req.body)
   const scheudleVal = req.body.scheudle;
   const creator = req.body.creator;
