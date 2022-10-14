@@ -24,9 +24,7 @@ class Home extends React.Component {
             }
         })
         const json = await res.json()
-        console.log(json)
         if (json.created.length > 0) {
-            console.log(json.created)
             this.setState({ created: json.created })
         }
         if (json.invited.length > 0) {

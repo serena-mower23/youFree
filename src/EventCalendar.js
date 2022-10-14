@@ -14,24 +14,6 @@ class EventCalendar extends React.Component {
 
     handleView( e ) {
         e.preventDefault()
-
-        // const json = {
-        //     youFreeID: id
-        // }
-
-        // const json = {
-        //     "youFreeID": this.props.event.youFreeID
-        // }
-
-        // let body = JSON.stringify(json)
-        // fetch('/view', {
-        //     method:'POST',
-        //     body,
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body
-        // })
         window.location.href = `http://localhost:8080/edit-calendar?id=${this.props.event.youFreeID}`
     }
 

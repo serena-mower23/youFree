@@ -10,17 +10,6 @@ app.use( express.static( 'dist' ) )
 app.use( express.static( 'src' ) )
 app.use(express.urlencoded({ extended : true }));
 
-// app.engine( 'handlebars',  hbs() )
-// app.set(    'view engine', 'handlebars' )
-// app.set(    'views',       './dist' )
-
-// app.set('view engine', 'html');
-// app.set('views', __dirname + '/views');
-// app.set('view engine', 'html');
-
-// app.use(methodOverride());
-// app.use(cookieParser());
-
 //Database connection
 const uri = "mongodb+srv://"+process.env.MONGO_USER+":"+process.env.MONGO_PASS+"@"+process.env.HOST+"/?retryWrites=true&w=majority";
 const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnifiedTopology:true });
@@ -100,19 +89,6 @@ client.connect()
   return youFreeCollection.find({ }).toArray()
 })
 
-
-//fun fact, didn't actually do anything cause we were redirecting in the client
-
-// app.post('/view', async (req, res) => {
-//   console.log("/view request: ")
-//   console.log(req.body)
-//   const result = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-//   console.log("Youadsfga")
-//   console.log(result.body)
-//   // const json = res.json(result)
-//   console.log("Here?")
-// })
-
 app.post('/newuser', (req, res) => {
   res.json({newUser: newUser})
   if (newUser) {
@@ -154,26 +130,12 @@ app.post('/createYF', async (req, res) => {
   // res.redirect('http://localhost:8080/home')
 })
 
-// creating function to invite user to youFree
 
 
 
-//this doesn't do anything right
-
-// app.get('/loadYF', async function(req, res) {
-//   console.log("/loadYFrequest: ")
-//   console.log(req.body)
-//   const data = await youFreeCollection.find({ }).toArray()
-//   let body = {
-//     username: req.session.username,
-//     youFreeInfo: data
-//   }
-//   res.json(body);
-// })
 
 app.get('/eventsYF', async function(req, res) {
   console.log("/eventsYF request: ")
-  //console.log(req.body)
   let createdArray = [];
   let invitedArray = [];
   const current = await userCollection.findOne({"username":req.session.username})
@@ -213,8 +175,6 @@ app.post('/grabTemplate', async function(req, res) {
     }
   }
   if (current !== null) {
-    console.log("I'm over here")
-    console.log(current.availableTimes)
     const body = {
       name: current.name,
       startDate: current.startDate,
@@ -228,40 +188,14 @@ app.post('/grabTemplate', async function(req, res) {
       currentUser: req.session.username
     }
 
-    console.log(body.availableTimes)
-
   res.json(body);
   }
 })
 
-// app.post('/eventsYF', async function(req, res) {
-//   let createdArray = [];
-//   let invitedArray = [];
-//   const current = await userCollection.find({"username":req.session.username}).toArray()
-//   const curCreated = current[0] === null ? null : current[0].created
-//   const curInvited = current[0] === null ? null : current[0].invited
-
-  // for (let i=0; i < curCreated.length; i++) {
-  //   let cur = await youFreeCollection.findOne({"youFreeID": curCreated[i].youFreeID});
-  //   createdArray.push(cur)
-  // }
-
-  // for (let i=0; i < curInvited.length; i++) {
-  //   let cur = await youFreeCollection.findOne({"youFreeID": curInvited[i].youFreeID});
-  //   invitedArray.push(cur)
-  // }
-
-//   let result = {
-//     "created": curCreated,
-//     "invited": curInvited
-//   }
-//   res.json(result);
-// })
-
 // add youFree to user's list of invited youFrees
 
 
-
+// creating function to invite user to youFree
 // add user to youFree's list of users
 app.post("/updateUsers", async (req, res) => {
   console.log("/update users request: ")

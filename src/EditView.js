@@ -20,10 +20,6 @@ class EditView extends React.Component {
       this.handleAvail = this.handleAvail.bind(this)
     }
 
-    // handleNewUser = (newUser) => {
-    //     this.setState({users: []})
-    // }
-
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
     }
@@ -111,8 +107,6 @@ class EditView extends React.Component {
             }
         })
         const json = await res.json()
-        console.log("PHINEASE")
-        console.log(json.availableTimes)
 
         currentUser = json.currentUser
         this.setState({ name: json.name})
@@ -126,40 +120,9 @@ class EditView extends React.Component {
         this.setState({ users: json.users})
         this.setState({ youFreeID: json.youFreeID})
 
-        console.log("im here")
-        console.log(json.availableTimes)
-
         this.handleAvail(json.availableTimes)
 
         this.setState({ready:true})
-
-        // const id = props.location.youFreeID
-        // const creator = rops.location.creator
-
-        // const props = {
-        //     id: id,
-        //     creator:creator
-        // }
-
-        // let body = JSON.stringify(props)
-
-        // fetch("/grabAvail", {
-        //     method:'POST',
-        //     body,
-        //     headers: {
-        //     'Content-Type': 'application/json'
-        //     }
-        // })
-        // .then(res => res.json())
-        // .then(json => {
-        //     console.log(json.schedule)
-        //     this.setState({ schedule: json.schedule })
-        //     this.setState({ready:true})
-        // })
-    }
-
-    componentDidMount() {
-        this.handleLoad()
     }
 
     // handleNameChange = newName => {
@@ -168,8 +131,6 @@ class EditView extends React.Component {
     // }
 
     handleAddUser = addedUser => {
-        console.log(this.state.users)
-        console.log(addedUser.target.value)
         this.setState({addedUser: addedUser.target.value})        
     }
 
@@ -219,6 +180,10 @@ class EditView extends React.Component {
         } else {
             alert("Please provide a username to invite.")
         }
+    }
+
+    componentDidMount() {
+        this.handleLoad()
     }
 
     render() {
