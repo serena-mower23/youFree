@@ -223,16 +223,21 @@ class EditView extends React.Component {
                         <Navbar />
                         <div className="row justify-content-evenly">
                             <div className="col-md-6 themed-grid-col">
-                                <h1 className="text-center">{this.state.name}</h1>
-                                <div className="mb-3">
-                                    <label className="form-label" htmlFor="addedUser">Invite Users to This youFree:</label>
-                                    <input className="form-control" type="text" name="addedUser" id="addedUser" onChange={this.handleAddUser} required/>
-                                    {/* <div className="invalid-feedback">Please provide an existing username for your youFree.</div>  */}
+                                <h1 className="text-center mb-3">{this.state.name}</h1>
+                                <p className="text-center">Enter the username of the user to invite.</p>
+                                <div className="row row-cols-lg-auto align-items-center d-flex justify-content-center">
+                                    <div className="col-12 text-center">
+                                        <div class="input-group">
+                                            <div class="input-group-text">@</div>
+                                            <input className="form-control" type="text" name="addedUser" id="addedUser" placeholder="Username" onChange={this.handleAddUser} required/>
+                                        </div>
+                                        {/* <div className="invalid-feedback">Please provide an existing username for your youFree.</div>  */}
+                                    </div>
+                                    <div className="d-sm-block col-12">
+                                        <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
+                                    </div>
                                 </div>
-                                <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
-                                </div>
-                                <p className="text-center mt-5">Click and drag to select your availability.</p>
+                                <p className="text-center mt-4">Click and drag to select your availability.</p>
                                 <ScheduleSelector
                                     selection={this.state.schedule}
                                     startDate={this.state.startDate}
@@ -248,7 +253,7 @@ class EditView extends React.Component {
                                     onChange={this.handleState}
                                 />
                                 {/* <form action="/create" method="PUT"> */}
-                                <div className="d-grid d-sm-block text-center mt-4">
+                                <div className="d-grid d-sm-block text-center mt-4 mb-5">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
                                 {/* </form> */}
@@ -270,7 +275,7 @@ class EditView extends React.Component {
                         <Navbar />
                         <div className="row justify-content-evenly">
                             <div className="col-md-6 themed-grid-col">
-                                <h1 className="text-center">{this.state.name}</h1>
+                                <h1 className="text-center mb-3">{this.state.name}</h1>
                                 <p className="text-center">Click and drag to select your availability.</p>
                                 <ScheduleSelector
                                     selection={this.state.schedule}
