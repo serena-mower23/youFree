@@ -35,52 +35,53 @@ class EditView extends React.Component {
             schedule: this.state.schedule
         }
 
-    let body = JSON.stringify(param)
+        let body = JSON.stringify(param)
 
-    const res =  await fetch("/update", {
-        method:"POST",
-        body,
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    console.log
-    // const json = await res.json()
-    // this.setState({ schedule: json.schedule})
+        const res =  await fetch("/update", {
+            method:"POST",
+            body,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        // window.location.reload()
+        // const json = await res.json()
+        // this.setState({ schedule: json.schedule})
     }
 
     handleLoad = async () => {
-    const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(window.location.search);
 
-    const youFreeID = params.get("id");
+        const youFreeID = params.get("id");
 
-        const param = {
-            youFreeID: youFreeID,
-        }
+            const param = {
+                youFreeID: youFreeID,
+            }
 
-    let body = JSON.stringify(param)
+        let body = JSON.stringify(param)
 
-    const res =  await fetch("/grabTemplate", {
-        method:"POST",
-        body,
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    const json = await res.json()
+        const res =  await fetch("/grabTemplate", {
+            method:"POST",
+            body,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const json = await res.json()
 
-    currentUser = json.currentUser
-    this.setState({ currentUser: json.currentUser})
-    this.setState({ schedule: json.schedule })
-    this.setState({ startDate: json.startDate})
-    this.setState({ numDays: json.numDays})
-    this.setState({ dateFormat: json.dateFormat})
-    this.setState({ creator: json.creator})
-    this.setState({ availableTime: json.availableTime})
-    this.setState({ users: json.users})
-    this.setState({ youFreeID: json.youFreeID})
+        currentUser = json.currentUser
+        this.setState({ name: json.name})
+        this.setState({ currentUser: json.currentUser})
+        this.setState({ schedule: json.schedule })
+        this.setState({ startDate: json.startDate})
+        this.setState({ numDays: json.numDays})
+        this.setState({ dateFormat: json.dateFormat})
+        this.setState({ creator: json.creator})
+        this.setState({ availableTime: json.availableTime})
+        this.setState({ users: json.users})
+        this.setState({ youFreeID: json.youFreeID})
 
-    this.setState({ready:true})
+        this.setState({ready:true})
 
 
         // const id = props.location.youFreeID
@@ -118,31 +119,34 @@ class EditView extends React.Component {
                 return (
                     <div>
                         <Navbar />
-                        <div className="col-md-6 themed-grid-col">
-                            <p className="text-center">Click and drag to select your availability.</p>
-                            <ScheduleSelector
-                                selection={this.state.schedule}
-                                startDate={this.state.startDate}
-                                numDays={this.state.numDays}
-                                minTime={8}
-                                maxTime={22}
-                                hourlyChunks={1}
-                                dateFormat={this.state.dateFormat}
-                                timeFormat={"h:mm a"}
-                                unselectedColor={"#FA3D24"}
-                                selectedColor={"rgba(80, 182, 51, 1)"}
-                                hoveredColor={"#ADB2AE"}
-                                onChange={this.handleState}
-                            />
+                        <div className="row justify-content-evenly">
+                            <div className="col-md-6 themed-grid-col">
+                                <h1 className="text-center">{this.state.name}</h1>
+                                <p className="text-center">Click and drag to select your availability.</p>
+                                <ScheduleSelector
+                                    selection={this.state.schedule}
+                                    startDate={this.state.startDate}
+                                    numDays={this.state.numDays}
+                                    minTime={8}
+                                    maxTime={22}
+                                    hourlyChunks={1}
+                                    dateFormat={this.state.dateFormat}
+                                    timeFormat={"h:mm a"}
+                                    unselectedColor={"#FA3D24"}
+                                    selectedColor={"rgba(80, 182, 51, 1)"}
+                                    hoveredColor={"#ADB2AE"}
+                                    onChange={this.handleState}
+                                />
+                                {/* <form action="/create" method="PUT"> */}
+                                <div className="d-grid d-sm-block text-center mt-4">
+                                        <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
+                                    </div>
+                                {/* </form> */}
+                            </div>
+                            <div className="col-md-4 themed-grid-col">
+                                <h4 className="text-center mt-5">Available Times</h4>
+                            </div>
                         </div>
-                        <div className="col-md-3 themed-grid-col">
-                            {/* <form action="/create" method="PUT"> */}
-                                <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
-                                </div>
-                            {/* </form> */}
-                        </div>
-                        <h1>Available times:</h1>
                     </div>
                 )
             }

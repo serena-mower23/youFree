@@ -208,6 +208,7 @@ app.post('/grabTemplate', async function(req, res) {
   }
   if (current !== null) {
     const body = {
+      name: current.name,
       startDate: current.startDate,
       schedule: schedule,
       numDays: current.numDays,
