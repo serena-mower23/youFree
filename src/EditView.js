@@ -119,7 +119,7 @@ class EditView extends React.Component {
                     <div>
                         <Navbar />
                         <div className="col-md-6 themed-grid-col">
-                            <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                            <p className="text-center">Click and drag to select your availability.</p>
                             <ScheduleSelector
                                 selection={this.state.schedule}
                                 startDate={this.state.startDate}
@@ -151,7 +151,7 @@ class EditView extends React.Component {
                     <div>
                         <Navbar />
                         <div className="col-md-6 themed-grid-col">
-                            <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                            <p className="text-center">Click and drag to select your availability.</p>
                             <ScheduleSelector
                                 selection={this.state.schedule}
                                 startDate={this.state.startDate}

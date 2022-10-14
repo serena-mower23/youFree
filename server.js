@@ -256,9 +256,9 @@ app.post("/update", async (req, res) => {
   if (req.session.username === req.body.creator) {
     let curArray = current.created
     for (let i = 0; i < curArray.length; i++) {
-      if (curArray[i].youFreeID === req.session.username) {
+      if (curArray[i].youFreeID === req.body.youFreeID) {
         const updatedBody = {
-          "youFreeID": req.session.username,
+          "youFreeID": req.body.youFreeID,
           "userAvail": req.body.schedule
         }
         updated.push(updatedBody)
@@ -267,13 +267,12 @@ app.post("/update", async (req, res) => {
       }
       userCollection.updateOne({"username":req.session.username}, {$set: {"created": updated}})
     }
-  }
-  else {
+  } else {
     let curArray = current.invited
     for (let i = 0; i < curArray.length; i++) {
-      if (curArray[i].youFreeID === req.session.username) {
+      if (curArray[i].youFreeID === req.body.youFreeID) {
         const updatedBody = {
-          "youFreeID": req.session.username,
+          "youFreeID": req.body.youFreeID,
           "userAvail": req.body.schedule
         }
         updated.push(updatedBody)

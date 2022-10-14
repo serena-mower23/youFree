@@ -45,7 +45,7 @@ class Home extends React.Component {
         })
         const json = await res.json()
           if (json.newUser) {
-            alert("New user created!")
+            alert("Your user account has been created.")
           }
     }
     
