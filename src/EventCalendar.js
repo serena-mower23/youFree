@@ -19,19 +19,19 @@ class EventCalendar extends React.Component {
         //     youFreeID: id
         // }
 
-        const json = {
-            "youFreeID": this.props.event.youFreeID
-        }
+        // const json = {
+        //     "youFreeID": this.props.event.youFreeID
+        // }
 
-        let body = JSON.stringify(json)
-        fetch('/view', {
-            method:'POST',
-            body,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body
-        })
+        // let body = JSON.stringify(json)
+        // fetch('/view', {
+        //     method:'POST',
+        //     body,
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body
+        // })
         window.location.href = `http://localhost:8080/edit-calendar?id=${this.props.event.youFreeID}`
     }
 

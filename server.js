@@ -54,12 +54,10 @@ app.post('/login', (req, res) => {
 
     if (result.length > 0) {
       if (req.body.password === result[0].password) {
-        newUser = false
         req.session.login = true
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
-        newUser = false
         // stay at login page
         res.redirect('http://localhost:8080')
       }
@@ -68,9 +66,13 @@ app.post('/login', (req, res) => {
       req.body.created = []
       req.body.invited = []
       userCollection.insertOne( req.body )
+      req.session.login = true
       res.redirect('http://localhost:8080/home')
     }
   })
+  // .then(result => {
+  //   res.json(newUser)
+  // }).then( json => console.log(json))
 })
 
 app.post('/logout', (req, res, next) => {
@@ -97,18 +99,24 @@ client.connect()
   return youFreeCollection.find({ }).toArray()
 })
 
-app.post('/view', (req, res) => {
-  console.log("/view request: ")
-  console.log(req.body)
-  youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-  .toArray()
-  .then(result => {
-    res.json(result)
-  }).then( json => console.log(json))
-})
+
+//fun fact, didn't actually do anything cause we were redirecting in the client
+
+// app.post('/view', async (req, res) => {
+//   console.log("/view request: ")
+//   console.log(req.body)
+//   const result = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+//   console.log("Youadsfga")
+//   console.log(result.body)
+//   // const json = res.json(result)
+//   console.log("Here?")
+// })
 
 app.post('/newuser', (req, res) => {
   res.json({newUser: newUser})
+  if (newUser) {
+    newUser = false;
+  }
 })
 
 app.post('/create', async (req, res) => {
@@ -133,7 +141,7 @@ app.post('/create', async (req, res) => {
   console.log(currentArray)
   const update = {
     youFreeID: id, 
-    userAvail:req.body.schedule
+    userAvail: req.body.schedule
   }
   currentArray.push(update)
 
@@ -178,8 +186,8 @@ app.get('/eventsYF', async function(req, res) {
 
 app.post('/grabTemplate', async function(req, res) {
   console.log("/grabTemplate")
+  console.log(req.body)
   const current = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-
   if (current !== null) {
     const body = {
       startDate: current.startDate,

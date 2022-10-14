@@ -9,13 +9,14 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            // startDate: null,
-            // numDays: null,
-            // dateFormat: null, 
-            // creator: null,
-            // availableTime: null,
-            // users: null,
-            // youFreeID: null
+            startDate: null,
+            numDays: null,
+            dateFormat: null, 
+            creator: null,
+            availableTime: null,
+            users: null,
+            youFreeID: null,
+            ready: false
         }
 
       this.handleState = this.handleState.bind(this);
@@ -53,6 +54,7 @@ class EditView extends React.Component {
     const json = await res.json()
 
     currentUser = json.currentUser;
+    console.log(currentUser)
     this.setState({ schedule: json.schedule })
     this.setState({ startDate: json.startDate})
     this.setState({ numDays: json.numDays})
@@ -63,8 +65,6 @@ class EditView extends React.Component {
     this.setState({ youFreeID: json.youFreeID})
 
     console.log("hello")
-    console.log(this.state.numDays)
-    console.log("Im here now")
     this.setState({ready:true})
 
 
