@@ -154,6 +154,10 @@ app.post('/createYF', async (req, res) => {
   // res.redirect('http://localhost:8080/home')
 })
 
+// creating function to invite user to youFree
+
+
+
 //this doesn't do anything right
 
 // app.get('/loadYF', async function(req, res) {
@@ -253,6 +257,47 @@ app.post('/grabTemplate', async function(req, res) {
 //   }
 //   res.json(result);
 // })
+
+// add youFree to user's list of invited youFrees
+
+
+
+// add user to youFree's list of users
+app.post("/updateUsers", async (req, res) => {
+  console.log("/update users request: ")
+  console.log(req.body)
+  let userExists = false
+
+  // if (req.session.username === req.body.creator) {
+  // is this user already in the users list?
+  // is this user NOT the creator?
+
+  const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
+
+  // check if the user has already been invited
+  if (!current.users.includes(req.body.invitedUser)) {
+    // current should be invited user
+    const user = await userCollection.findOne({"username": req.body.invitedUser})
+    // check if the user exists in the database
+    if (user !== null) {
+      userExists = true
+      // add the event to the user
+      let invited = user.invited
+      let newEvent = {
+        "youFreeID": req.body.youFreeID,
+        "userAvail": []
+      }
+      invited.push(newEvent)
+      userCollection.updateOne({"username":req.body.invitedUser}, {$set: {"invited": invited}})
+
+      // add the user to the event
+      let currentUsers = current.users
+      currentUsers.push(req.body.invitedUser)
+      youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"users": currentUsers}})
+    }
+  }
+  res.json({userExists: userExists})
+})
 
 app.get("/getUser", async (req, res) => {
   const username = req.session.username
