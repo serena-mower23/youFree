@@ -30,7 +30,10 @@ class Template extends React.Component {
     }
 
     handleState = (newSchedule) => {
+        let origSchedule = this.state.schedule;
+        console.log("Orig Sch: " + origSchedule);
         this.setState({schedule: newSchedule});
+        // this.setState({schedule: [...origSchedule, ...newSchedule]})
         this.props.parentCallBack(this.state.schedule)
     }
 
@@ -90,6 +93,8 @@ class CalendarView extends React.Component {
 
     handleCallBack = (newSchedule) => {
         this.setState({ schedule: newSchedule })
+        console.log("Ar eyou here")
+        console.log(this.state.schedule)
     }
   
     handleUpdate = () => {
@@ -112,14 +117,20 @@ class CalendarView extends React.Component {
 
     handleCreate = e => {
         e.preventDefault()
+        console.log("schedule")
+        console.log(this.state.schedule)
+        console.log("sir")
         const json = {
             schedule:this.state.schedule,
             name:this.state.name,
             dateFormat: this.state.dateFormat,
             startDate: this.state.startDate,
-            numDays: this.state.numDays
+            numDays: this.state.numDays,
+            type: this.state.weekType
         }
         let body = JSON.stringify(json)
+        console.log("YOU MAKE NOWSNESE")
+        console.log(body)
 
         fetch('/createYF', {
             method:'POST',

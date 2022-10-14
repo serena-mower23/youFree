@@ -24,8 +24,8 @@ class EditView extends React.Component {
         this.setState({schedule: newSchedule});
     }
 
-    handleAvail = availableTimes => {
-        // let userCountCompleted = 0;
+    handleAvail = (availableTimes, type) => {
+        console.log(availableTimes)
         let curAvail = availableTimes
         let timesArray = []
         
@@ -60,7 +60,31 @@ class EditView extends React.Component {
             }
         }
 
-        this.setState({ timesArray: timesArray})
+        let changedTimes = []    
+        for (let i = 0; i < timesArray.length; i++) {
+            console.log(timesArray[i])
+            let date = new Date(timesArray[i].time)
+            let dateString = ""
+
+            console.log("WHYYY")
+            console.log(type)
+
+            if (type === 0) {
+                dateString = date.toLocaleString()
+            }
+            else if (type === 1) {
+                let dateStringFirst = date.toLocaleString('en-us', {  weekday: 'long' })
+                let second = date.toLocaleTimeString()
+                console.log(second)
+                dateString = dateStringFirst + ", " + second
+            }
+            console.log(dateString)
+            changedTimes.push(dateString)
+        }
+
+
+
+        this.setState({ timesArray: changedTimes})
 
     }
 
@@ -108,6 +132,9 @@ class EditView extends React.Component {
         })
         const json = await res.json()
 
+        console.log("jfhasd")
+        console.log(json)
+
         currentUser = json.currentUser
         this.setState({ name: json.name})
         this.setState({ currentUser: json.currentUser})
@@ -119,8 +146,10 @@ class EditView extends React.Component {
         this.setState({ availableTimes: json.availableTimes})
         this.setState({ users: json.users})
         this.setState({ youFreeID: json.youFreeID})
+        this.setState({type:json.type})
 
-        this.handleAvail(json.availableTimes)
+        this.handleAvail(json.availableTimes, json.type)
+        console.log(this.state.availableTimes)
 
         this.setState({ready:true})
     }
@@ -228,7 +257,7 @@ class EditView extends React.Component {
                                 <h4 className="text-center mt-5">Available Times</h4>
                                 <ul>
                                     {this.state.timesArray.map( (time, index) =>
-                                        <li>{time.time}</li>
+                                        <li>{time}</li>
                                     )}
                                 </ul>
                             </div>

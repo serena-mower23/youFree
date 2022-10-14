@@ -98,23 +98,27 @@ app.post('/newuser', (req, res) => {
 
 app.post('/createYF', async (req, res) => {
   console.log("/createYF request: ")
+  console.log("i swear")
   console.log(req.body)
   const json = {
     name: req.body.name,
     startDate: req.body.startDate,
     users: [],
     creator: req.session.username,
-    availableTimes: [],
+    availableTimes: req.body.schedule,
     dateFormat: req.body.dateFormat,
     numDays: req.body.numDays,
-    youFreeID: ""
+    youFreeID: "",
+    type: req.body.type
   }
+  console.log("sadgfads")
+  console.log(req.body.type)
   await youFreeCollection.insertOne(json)
   const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
   const id = result._id.toString()
   await youFreeCollection.updateOne(
     {$and: [{"name" :req.body.name}, {"creator": req.session.username}] },
-    {$set: {"youFreeID": id, "availableTimes": req.body.schedule}})
+    {$set: {"youFreeID": id, "availableTimes": req.body.schedule, "type": req.body.type}})
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
@@ -185,9 +189,10 @@ app.post('/grabTemplate', async function(req, res) {
       availableTimes: current.availableTimes,
       users: current.users,
       youFreeID: current.youFreeID,
-      currentUser: req.session.username
+      currentUser: req.session.username,
+      type: current.type
     }
-
+   console.log(body) 
   res.json(body);
   }
 })
@@ -248,6 +253,7 @@ app.post("/update", async (req, res) => {
   console.log(req.body)
   let updated = []
   const current = await userCollection.findOne({"username":req.session.username})
+  const youFree = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
 
   if (req.session.username === req.body.creator) {
     let curArray = current.created
@@ -277,6 +283,24 @@ app.post("/update", async (req, res) => {
       }
       userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
     }
+    let availTimes = youFree.availableTimes 
+    let newTimes = []
+    console.log("Already added available times")
+    console.log(availTimes)
+
+    console.log("To be added times")
+    console.log(req.body.schedule)
+
+    for (let i = 0; i < availTimes.length; i++) {
+      if (req.body.schedule.includes(availTimes[i])) {
+        newTimes.push(availTimes[i])
+      }
+    }
+
+    console.log("resulting merge")
+    console.log(newTimes)
+    youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"availableTimes": newTimes}})
+    
   }
 })
 
