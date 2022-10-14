@@ -33,7 +33,7 @@ class EditView extends React.Component {
     componentDidMount = ( e ) => {
         // e.preventDefault()
         const id = props.location.youFreeID
-        const creator = rops.location.creator
+        const creator = props.location.creator
 
         const json = {
             id: id,

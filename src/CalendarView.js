@@ -9,6 +9,16 @@ const values = [
     {label: "Blank Week", weekType: 1, dateFormat: "ddd"},
 ]
 
+const days = [
+    {label: "Sunday", startDate: new Date("10-09-2022")},
+    {label: "Monday", startDate: new Date("10-10-2022")},
+    {label: "Tuesday", startDate: new Date("10-11-2022")},
+    {label: "Wednesday", startDate: new Date("10-12-2022")},
+    {label: "Thursday", startDate: new Date("10-13-2022")},
+    {label: "Friday", startDate: new Date("10-14-2022")},
+    {label: "Saturday", startDate: new Date("10-15-2022")},
+]
+
 
 class Template extends React.Component {
     constructor(props) {
@@ -52,7 +62,7 @@ class CalendarView extends React.Component {
         super(props)
         this.state = {
             weekType: 0,
-            name: "Hello",
+            name: "Event Name",
             schedule: [],
             dateFormat: "M/D",
             label: null,
@@ -102,7 +112,7 @@ class CalendarView extends React.Component {
     }
 
     handleCreate = e => {
-        // e.preventDefault()
+        e.preventDefault()
         const json = {
             schedule:this.state.schedule,
             name:this.state.name,
@@ -131,32 +141,10 @@ class CalendarView extends React.Component {
         this.setState({numDays: newNum.target.value})
     }
 
-    handleDaysChange = newDay => {
+    handleDaysChange = selectedOption => {
         this.setState({ready: false});
-        const day = newDay.target.value;
-        switch (day) {
-            case "Sun": 
-                this.setState({startDate: new Date("10-09-2022")})
-                break;
-            case "Mon": 
-                this.setState({startDate: new Date("10-10-2022")})
-                break;
-            case "Tue": 
-                this.setState({startDate: new Date("10-11-2022")})
-                break;
-            case "Wed": 
-                this.setState({startDate: new Date("10-12-2022")})
-                break;
-            case "Thu": 
-                this.setState({startDate: new Date("10-13-2022")})
-                break;
-            case "Fri": 
-                this.setState({startDate: new Date("10-14-2022")})
-                break;
-            case "Sat": 
-                this.setState({startDate: new Date("10-15-2022")})
-                break;
-        }
+        this.setState({startDate: selectedOption.startDate});
+        this.setState({label: selectedOption.label});
     }
 
     render() {
@@ -170,15 +158,15 @@ class CalendarView extends React.Component {
                             <div className="mb-5 mt-5m-auto">
                                 <p>Select the type of youFree you wish to create.</p>
                                 <Select
-                                    options={values} 
-                                    placeholder={this.state.label}
+                                    options={values}
+                                    placeholder={"Select"}
                                     onChange={this.handleDisplay}
                                 />
                             </div>
                             <p>Enter the information for your youFree below.</p>
                             <div className="mb-5 m-auto">
                                 <div className="mb-3">
-                                    <label className="form-label" htmlFor="youFreeName">Please enter a name:</label>
+                                    <label className="form-label" htmlFor="youFreeName">Event Name:</label>
                                     <input className="form-control" type="text" name="youFreeName" id="youFreeName" onChange={this.handleNameChange} required/>
                                 <div className="invalid-feedback">Please provide a name for your youFree.</div> 
                                 </div>
@@ -200,7 +188,7 @@ class CalendarView extends React.Component {
                         <div className="col-md-6 themed-grid-col">
                             <div className="ms-5">
                                 <h1 className="text-center">{this.state.name}</h1>
-                                <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                                <p className="text-center">Click and drag to select your availability.</p>
                             </div>
                         </div>
                     </div>
@@ -217,20 +205,25 @@ class CalendarView extends React.Component {
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
                                         options={values} 
-                                        placeholder={this.state.label}
+                                        placeholder={"Select"}
                                         onChange={this.handleDisplay}
                                     />
                                 </div>
                                 <p>Enter the information for your youFree below.</p>
                                 <div className="mb-5 m-auto">
                                     <div className="mb-3">
-                                        <label className="form-label" htmlFor="youFreeName">Please enter a name:</label>
+                                        <label className="form-label" htmlFor="youFreeName">Event Name:</label>
                                         <input className="form-control" type="text" name="youFreeName" id="youFreeName" onChange={this.handleNameChange} required/>
                                         <div className="invalid-feedback">Please provide a name for your youFree.</div> 
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label" htmlFor="startDate">Choose Starting Day (Mon,Tue,etc):</label>
-                                        <input className="form-control" type="text" name="startDate" id="startDate" onChange={this.handleDaysChange} required/>
+                                        <label className="form-label" htmlFor="startDate">Starting Day:</label>
+                                        <Select
+                                            options={days} 
+                                            placeholder={"Select"}
+                                            onChange={this.handleDaysChange}
+                                            required
+                                        />
                                         <div className="invalid-feedback">Please provide a day of the week.</div> 
                                     </div>
                                     <div className="mb-3">
@@ -246,7 +239,7 @@ class CalendarView extends React.Component {
                             <div className="col-md-6 themed-grid-col">
                                 <div className="ms-5">
                                     <h1 className="text-center">{this.state.name}</h1>
-                                    <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                                    <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                             </div>
                         </div>
@@ -265,14 +258,14 @@ class CalendarView extends React.Component {
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
                                         options={values} 
-                                        placeholder={this.state.label}
+                                        placeholder={"Select"}
                                         onChange={this.handleDisplay}
                                     />
                                 </div>
                                 <p>Enter the information for your youFree below.</p>
                                 <div className="mb-5 m-auto">
                                     <div className="mb-3">
-                                        <label className="form-label" htmlFor="youFreeName">Please enter a name:</label>
+                                        <label className="form-label" htmlFor="youFreeName">Event Name:</label>
                                         <input className="form-control" type="text" name="youFreeName" id="youFreeName" onChange={this.handleNameChange} required/>
                                     <div className="invalid-feedback">Please provide a name for your youFree.</div> 
                                     </div>
@@ -294,7 +287,7 @@ class CalendarView extends React.Component {
                             <div className="col-md-6 themed-grid-col">
                                 <div className="ms-5">
                                     <h1 className="text-center">{this.state.name}</h1>
-                                    <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                                    <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 m-auto">
                                     <form action="/create" method="POST">
@@ -325,20 +318,25 @@ class CalendarView extends React.Component {
                                     <p>Select the type of youFree you wish to create.</p>
                                     <Select
                                         options={values} 
-                                        placeholder={this.state.label}
+                                        placeholder={"Select"}
                                         onChange={this.handleDisplay}
                                     />
                                 </div>
                                 <p>Enter the information for your youFree below.</p>
                                 <div className="mb-5 m-auto">
                                     <div className="mb-3">
-                                        <label className="form-label" htmlFor="youFreeName">Please enter a name:</label>
+                                        <label className="form-label" htmlFor="youFreeName">Event Name:</label>
                                         <input className="form-control" type="text" name="youFreeName" id="youFreeName" onChange={this.handleNameChange} required/>
                                         <div className="invalid-feedback">Please provide a name for your youFree.</div> 
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label" htmlFor="startDate">Choose Starting Day (Mon,Tue,etc):</label>
-                                        <input className="form-control" type="text" name="startDate" id="startDate" onChange={this.handleDaysChange} required/>
+                                        <label className="form-label" htmlFor="startDate">Starting Day:</label>
+                                        <Select
+                                            options={days}
+                                            placeholder={"Select"}
+                                            onChange={this.handleDaysChange}
+                                            required
+                                        />
                                         <div className="invalid-feedback">Please provide a day of the week.</div> 
                                     </div>
                                     <div className="mb-3">
@@ -354,7 +352,7 @@ class CalendarView extends React.Component {
                             <div className="col-md-6 themed-grid-col">
                                 <div className="ms-5">
                                     <h1 className="text-center">{this.state.name}</h1>
-                                    <p className="text-center">Click and Drag to Toggle; Saved Immediately</p>
+                                    <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 m-auto">
                                     <form action="/create" method="POST">

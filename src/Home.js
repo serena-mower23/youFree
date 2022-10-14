@@ -81,8 +81,8 @@ class Home extends React.Component {
                     </div> */}
                     <div className="container">
                         <Navbar />
-                        <EventGroup title={"My Events"}  events={this.state.created} />
-                        <EventGroup title={"Invitations"} events={this.state.invited} />
+                        <EventGroup title={"My Events"} message={"You don't have any created events."} events={this.state.created} />
+                        <EventGroup title={"Invitations"} message={"You don't have any event invitations."} events={this.state.invited} />
                     </div>
                 </div>
             );
