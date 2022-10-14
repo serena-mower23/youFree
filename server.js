@@ -236,6 +236,8 @@ app.post('/getAvail', async function(req, res) {
     - current user
 */
 app.post('/delete', (req, res) => {
+  console.log("req.session.username: " + req.session.username)
+  console.log("req.body.creator: " + req.body.creator)
   if (req.session.username === req.body.creator) {
     // the current user is the event creator
     youFreeCollection.deleteOne({_id: mongodb.ObjectId(req.body.youFreeID)})
@@ -317,19 +319,22 @@ app.post('/delete', (req, res) => {
   }
 })
 
-app.post('/grabName', async function(req, res) {
-  console.log("/grabName request: ")
+app.post('/getInfo', async function(req, res) {
+  console.log("/getInfo request: ")
   console.log(req.body)
   const current = await youFreeCollection.find({}).toArray()
   let sendName = ""
+  let sendCreator = ""
   for (let i = 0; i < current.length; i++) {
     let objString = current[i]._id.toString()
     if (objString === req.body.youFreeID) {
       sendName = current[i].name
+      sendCreator = current[i].creator
     }
   }
   const json = {
-    name: sendName
+    name: sendName,
+    creator: sendCreator
   }
   res.json(json)
 })

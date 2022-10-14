@@ -34,7 +34,7 @@ class Home extends React.Component {
             this.setState({ created: json.created })
             console.log("ughhh")
         }
-        if (json.invited.created > 0) {
+        if (json.invited.length > 0) {
             console.log("or here?")
             this.setState({ invited: json.invited })
         }
