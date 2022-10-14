@@ -117,20 +117,43 @@ class EditView extends React.Component {
     //     this.setState({name: newName.target.value});
     // }
 
-    handleAddUser = selectedOption => {
+    handleAddUser = addedUser => {
         console.log(this.state.users)
-        this.setState({users: users.append(selectedOption.addedUser)})
-        
+        console.log(addedUser.target.value)
+        this.setState({addedUser: addedUser.target.value})        
     }
 
-    handleUpdateAddedUsers = () => {
-        this.setState({ ready: true });
-        console.log(this.state.users)
+    handleUpdateAddedUsers = e => {
+        e.preventDefault();
+        
+        const youFreeID = this.state.youFreeID;
+        const currListUsers = this.state.users;
+        // how to grab input value
+        const invitedUser = this.state.addedUser;
+        currListUsers.push(invitedUser);
+
+        
+        const json = {
+            youFreeID: youFreeID,
+            invitedUser: invitedUser,
+            users: currListUsers
+        }
+        let body = JSON.stringify(json)
+
+        fetch("/updateUsers", {
+            method:"POST",
+            body,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+
+        //window.location.href = "http://localhost:8080/home"
     }
 
     render() {
         if (this.state.ready) {
-            // if (this.state.creator === currentUser) {
+            if (this.state.creator === currentUser) {
                 return (
                     <div>
                         <Navbar />
@@ -145,6 +168,7 @@ class EditView extends React.Component {
                                 <div className="d-grid d-sm-block text-center">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
                                 </div>
+                        <p></p>
                         <div className="col-md-6 themed-grid-col">
                             <p className="text-center">Click and drag to select your availability.</p>
                             <ScheduleSelector
@@ -163,7 +187,7 @@ class EditView extends React.Component {
                             />
                         </div>
                         
-                        
+                        <p></p>
                         <div className="col-md-3 themed-grid-col">
                             {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
@@ -179,39 +203,38 @@ class EditView extends React.Component {
                     </div>
                 )
             }
-            // else {
-            //     return (
-            //         <div>
-            //             <Navbar />
-            //             <div className="col-md-6 themed-grid-col">
-            //                 <p className="text-center">Click and drag to select your availability.</p>
-            //                 <ScheduleSelector
-            //                     selection={this.state.schedule}
-            //                     startDate={this.state.startDate}
-            //                     numDays={this.state.numDays}
-            //                     minTime={8}
-            //                     maxTime={22}
-            //                     hourlyChunks={1}
-            //                     dateFormat={this.state.dateFormat}
-            //                     timeFormat={"h:mm a"}
-            //                     unselectedColor={"#FA3D24"}
-            //                     selectedColor={"rgba(80, 182, 51, 1)"}
-            //                     hoveredColor={"#ADB2AE"}
-            //                     onChange={this.handleState}
-            //                 />
-            //             </div>
-            //             <div className="col-md-3 themed-grid-col">
-            //                 {/* <form action="/create" method="PUT"> */}
-            //                     <div className="d-grid d-sm-block text-center">
-            //                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
-            //                     </div>
-            //                 {/* </form> */}
-            //             </div>
-            //         </div>
-            //     )
+            else {
+                return (
+                    <div>
+                        <Navbar />
+                        <div className="col-md-6 themed-grid-col">
+                            <p className="text-center">Click and drag to select your availability.</p>
+                            <ScheduleSelector
+                                selection={this.state.schedule}
+                                startDate={this.state.startDate}
+                                numDays={this.state.numDays}
+                                minTime={8}
+                                maxTime={22}
+                                hourlyChunks={1}
+                                dateFormat={this.state.dateFormat}
+                                timeFormat={"h:mm a"}
+                                unselectedColor={"#FA3D24"}
+                                selectedColor={"rgba(80, 182, 51, 1)"}
+                                hoveredColor={"#ADB2AE"}
+                                onChange={this.handleState}
+                            />
+                        </div>
+                        <div className="col-md-3 themed-grid-col">
+                            {/* <form action="/create" method="PUT"> */}
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
+                                </div>
+                            {/* </form> */}
+                        </div>
+                    </div>
+                )
             }
         }
-    // }
-// }
-
+    }
+}
 export default EditView;
