@@ -113,6 +113,45 @@ class EditView extends React.Component {
         this.handleLoad()
     }
 
+    // handleNameChange = newName => {
+    //     this.setState({ready: false});
+    //     this.setState({name: newName.target.value});
+    // }
+
+    handleAddUser = addedUser => {
+        console.log(this.state.users)
+        console.log(addedUser.target.value)
+        this.setState({addedUser: addedUser.target.value})        
+    }
+
+    handleUpdateAddedUsers = e => {
+        e.preventDefault();
+        
+        const youFreeID = this.state.youFreeID;
+        const currListUsers = this.state.users;
+        // how to grab input value
+        const invitedUser = this.state.addedUser;
+        currListUsers.push(invitedUser);
+
+        
+        const json = {
+            youFreeID: youFreeID,
+            invitedUser: invitedUser,
+            users: currListUsers
+        }
+        let body = JSON.stringify(json)
+
+        fetch("/updateUsers", {
+            method:"POST",
+            body,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+
+        //window.location.href = "http://localhost:8080/home"
+    }
+
     render() {
         if (this.state.ready) {
             if (this.state.creator === currentUser) {
@@ -122,6 +161,14 @@ class EditView extends React.Component {
                         <div className="row justify-content-evenly">
                             <div className="col-md-6 themed-grid-col">
                                 <h1 className="text-center">{this.state.name}</h1>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="addedUser">Invite Users to This youFree:</label>
+                                    <input className="form-control" type="text" name="addedUser" id="addedUser" onChange={this.handleAddUser} required/>
+                                    <div className="invalid-feedback">Please provide an existing username for your youFree.</div> 
+                                </div>
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
+                                </div>
                                 <p className="text-center">Click and drag to select your availability.</p>
                                 <ScheduleSelector
                                     selection={this.state.schedule}
@@ -154,8 +201,7 @@ class EditView extends React.Component {
                         </div>
                     </div>
                 )
-            }
-            else {
+            } else {
                 return (
                     <div>
                         <Navbar />
@@ -193,5 +239,4 @@ class EditView extends React.Component {
         }
     }
 }
-
 export default EditView;
