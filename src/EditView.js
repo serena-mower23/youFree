@@ -9,7 +9,8 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            ready: false
+            ready: false,
+            addedUser: null
         }
 
       this.handleState = this.handleState.bind(this);
@@ -127,29 +128,49 @@ class EditView extends React.Component {
     handleUpdateAddedUsers = e => {
         e.preventDefault();
         
-        const youFreeID = this.state.youFreeID;
-        const currListUsers = this.state.users;
-        // how to grab input value
-        const invitedUser = this.state.addedUser;
-        currListUsers.push(invitedUser);
+        if (this.state.addedUser !== null) {
+            const youFreeID = this.state.youFreeID;
+            const creator = this.state.creator;
+            const currListUsers = this.state.users;
+            // how to grab input value
+            const invitedUser = this.state.addedUser;
+            currListUsers.push(invitedUser);
 
-        
-        const json = {
-            youFreeID: youFreeID,
-            invitedUser: invitedUser,
-            users: currListUsers
-        }
-        let body = JSON.stringify(json)
-
-        fetch("/updateUsers", {
-            method:"POST",
-            body,
-            headers: {
-                "Content-Type": "application/json"
+            const json = {
+                youFreeID: youFreeID,
+                // creator: creator,
+                invitedUser: invitedUser,
+                // users: currListUsers
             }
-        })
+            let body = JSON.stringify(json)
 
-        //window.location.href = "http://localhost:8080/home"
+            // Prevent creator from inviting themselves
+            // alert current user?
+            if (invitedUser !== creator) {
+                fetch("/updateUsers", {
+                    method:"POST",
+                    body,
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(json => {
+                    if (json.userExists) {
+                        alert("The user has been invited.")
+                    } else {
+                        alert("The username does not exist.")
+                    }
+                })
+            } else {
+                alert("Please provide a username that is not your own.")
+            }
+            document.getElementById("addedUser").value = ""
+            this.setState({addedUser: null})
+            //window.location.href = "http://localhost:8080/home"
+        } else {
+            alert("Please provide a username to invite.")
+        }
     }
 
     render() {
@@ -164,12 +185,12 @@ class EditView extends React.Component {
                                 <div className="mb-3">
                                     <label className="form-label" htmlFor="addedUser">Invite Users to This youFree:</label>
                                     <input className="form-control" type="text" name="addedUser" id="addedUser" onChange={this.handleAddUser} required/>
-                                    <div className="invalid-feedback">Please provide an existing username for your youFree.</div> 
+                                    {/* <div className="invalid-feedback">Please provide an existing username for your youFree.</div>  */}
                                 </div>
                                 <div className="d-grid d-sm-block text-center">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
                                 </div>
-                                <p className="text-center">Click and drag to select your availability.</p>
+                                <p className="text-center mt-5">Click and drag to select your availability.</p>
                                 <ScheduleSelector
                                     selection={this.state.schedule}
                                     startDate={this.state.startDate}

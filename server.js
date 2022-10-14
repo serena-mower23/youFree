@@ -262,33 +262,38 @@ app.post('/grabTemplate', async function(req, res) {
 app.post("/updateUsers", async (req, res) => {
   console.log("/update users request: ")
   console.log(req.body)
-  let updated = []
-
-  // current should be invited user
-  const current = await userCollection.findOne({"username":req.body.invitedUser})
+  let userExists = false
 
   // if (req.session.username === req.body.creator) {
   // is this user already in the users list?
   // is this user NOT the creator?
-    let curArray = current.invited
-    for (let i = 0; i < curArray.length; i++) {
-      if (curArray[i].youFreeID === req.body.youFreeID) {
-        const updatedBody = {
-          "youFreeID": req.body.youFreeID,
-          // update youFree's list of users
-          "users": req.body.users
-        }
-        updated.push(updatedBody)
-      } else {
-        updated.push(curArray[i])
-      }
-      userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
-    }
-  
-}
-//}
-)
 
+  const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
+
+  // check if the user has already been invited
+  if (!current.users.includes(req.body.invitedUser)) {
+    // current should be invited user
+    const user = await userCollection.findOne({"username": req.body.invitedUser})
+    // check if the user exists in the database
+    if (user !== null) {
+      userExists = true
+      // add the event to the user
+      let invited = user.invited
+      let newEvent = {
+        "youFreeID": req.body.youFreeID,
+        "userAvail": []
+      }
+      invited.push(newEvent)
+      userCollection.updateOne({"username":req.body.invitedUser}, {$set: {"invited": invited}})
+
+      // add the user to the event
+      let currentUsers = current.users
+      currentUsers.push(req.body.invitedUser)
+      youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"users": currentUsers}})
+    }
+  }
+  res.json({userExists: userExists})
+})
 
 app.post("/update", async (req, res) => {
   console.log("/update request: ")
