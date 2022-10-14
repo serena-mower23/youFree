@@ -42,6 +42,8 @@ class EditView extends React.Component {
         }
 
     let body = JSON.stringify(param)
+    console.log("PLEASE")
+    console.log(body)
 
     const res =  await fetch("/grabTemplate", {
         method:"POST",
@@ -49,12 +51,12 @@ class EditView extends React.Component {
         headers: {
             "Content-Type": "application/json"
         }
-    }
-    )
+    })
     const json = await res.json()
+    console.log("please")
+    console.log(json)
 
     currentUser = json.currentUser;
-    console.log(currentUser)
     this.setState({ schedule: json.schedule })
     this.setState({ startDate: json.startDate})
     this.setState({ numDays: json.numDays})

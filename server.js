@@ -119,11 +119,12 @@ app.post('/newuser', (req, res) => {
   }
 })
 
-app.post('/create', async (req, res) => {
-  console.log("/create request: ")
+app.post('/createYF', async (req, res) => {
+  console.log("/createYF request: ")
   console.log(req.body)
   const json = {
     name: req.body.name,
+    startDate: req.body.startDate,
     users: [],
     creator: req.session.username,
     availableTimes: [],
@@ -138,13 +139,12 @@ app.post('/create', async (req, res) => {
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
-  console.log(currentArray)
+
   const update = {
     youFreeID: id, 
     userAvail: req.body.schedule
   }
   currentArray.push(update)
-
   await userCollection.updateOne(
     {"username": req.session.username},
     { $set: {"created": currentArray}}
@@ -152,16 +152,18 @@ app.post('/create', async (req, res) => {
   // res.redirect('http://localhost:8080/home')
 })
 
-app.get('/loadYF', async function(req, res) {
-  console.log("/loadYFrequest: ")
-  console.log(req.body)
-  const data = await youFreeCollection.find({ }).toArray()
-  let body = {
-    username: req.session.username,
-    youFreeInfo: data
-  }
-  res.json(body);
-})
+//this doesn't do anything right
+
+// app.get('/loadYF', async function(req, res) {
+//   console.log("/loadYFrequest: ")
+//   console.log(req.body)
+//   const data = await youFreeCollection.find({ }).toArray()
+//   let body = {
+//     username: req.session.username,
+//     youFreeInfo: data
+//   }
+//   res.json(body);
+// })
 
 app.get('/eventsYF', async function(req, res) {
   console.log("/eventsYF request: ")
@@ -187,7 +189,10 @@ app.get('/eventsYF', async function(req, res) {
 app.post('/grabTemplate', async function(req, res) {
   console.log("/grabTemplate")
   console.log(req.body)
-  const current = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+  const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
+  console.log("checkl me out")
+  console.log(current)
+  console.log(current.startDate)
   if (current !== null) {
     const body = {
       startDate: current.startDate,
