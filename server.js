@@ -193,8 +193,7 @@ app.post('/grabTemplate', async function(req, res) {
   const users = await userCollection.findOne({"username":req.session.username})
   let youFrees = []
   let schedule = []
-  console.log("JKHDFLK")
-  console.log(users)
+
   if (req.session.username === current.creator) {
     youFrees = users.created
   }
@@ -247,6 +246,44 @@ app.post('/grabTemplate', async function(req, res) {
 //   }
 //   res.json(result);
 // })
+
+app.post("/update", async (req, res) => {
+  console.log("/update request: ")
+  console.log(req.body)
+  let updated = []
+  const current = await userCollection.findOne({"username":req.session.username})
+
+  if (req.session.username === req.body.creator) {
+    let curArray = current.created
+    for (let i = 0; i < curArray.length; i++) {
+      if (curArray[i].youFreeID === req.session.username) {
+        const updatedBody = {
+          "youFreeID": req.session.username,
+          "userAvail": req.body.schedule
+        }
+        updated.push(updatedBody)
+      } else {
+        updated.push(curArray[i])
+      }
+      userCollection.updateOne({"username":req.session.username}, {$set: {"created": updated}})
+    }
+  }
+  else {
+    let curArray = current.invited
+    for (let i = 0; i < curArray.length; i++) {
+      if (curArray[i].youFreeID === req.session.username) {
+        const updatedBody = {
+          "youFreeID": req.session.username,
+          "userAvail": req.body.schedule
+        }
+        updated.push(updatedBody)
+      } else {
+        updated.push(curArray[i])
+      }
+      userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
+    }
+  }
+})
 
 app.post('/getAvail', async function(req, res) {
   console.log("/getAvail request: ")

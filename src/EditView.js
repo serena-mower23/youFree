@@ -9,19 +9,12 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            currentUser: null,
-            startDate: null,
-            numDays: null,
-            dateFormat: null, 
-            creator: null,
-            availableTime: null,
-            users: null,
-            youFreeID: null,
             ready: false
         }
 
       this.handleState = this.handleState.bind(this);
       this.handleLoad = this.handleLoad.bind(this);
+      this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     // handleNewUser = (newUser) => {
@@ -30,7 +23,30 @@ class EditView extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
-        console.log(this.state.schedule);
+    }
+
+    handleUpdate = async (e) => {
+        e.preventDefault
+        const param = {
+            youFreeID: this.state.youFreeID,
+            currentUser: currentUser, 
+            creator: this.state.creator,
+            users: this.state.users,
+            schedule: this.state.schedule
+        }
+
+    let body = JSON.stringify(param)
+
+    const res =  await fetch("/update", {
+        method:"POST",
+        body,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    console.log
+    // const json = await res.json()
+    // this.setState({ schedule: json.schedule})
     }
 
     handleLoad = async () => {
@@ -52,8 +68,6 @@ class EditView extends React.Component {
         }
     })
     const json = await res.json()
-    console.log("please")
-    console.log(json)
 
     currentUser = json.currentUser
     this.setState({ currentUser: json.currentUser})
@@ -66,7 +80,6 @@ class EditView extends React.Component {
     this.setState({ users: json.users})
     this.setState({ youFreeID: json.youFreeID})
 
-    console.log("hello")
     this.setState({ready:true})
 
 
@@ -123,11 +136,11 @@ class EditView extends React.Component {
                             />
                         </div>
                         <div className="col-md-3 themed-grid-col">
-                            <form action="/create" method="PUT">
+                            {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary">Update</button>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                            </form>
+                            {/* </form> */}
                         </div>
                         <h1>Available times:</h1>
                     </div>
@@ -155,11 +168,11 @@ class EditView extends React.Component {
                             />
                         </div>
                         <div className="col-md-3 themed-grid-col">
-                            <form action="/create" method="PUT">
+                            {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary">Update</button>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                            </form>
+                            {/* </form> */}
                         </div>
                     </div>
                 )
