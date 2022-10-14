@@ -1,8 +1,11 @@
 const webpack = require('webpack');
 const path = require('path');
+// const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const config = {
+  
   entry: [
+    'url-search-params-polyfill',
     './src/index.js'
   ],
   output: {
@@ -29,7 +32,7 @@ const config = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx', '.css']   
-}
+  }
 };
 
 module.exports = config;

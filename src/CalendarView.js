@@ -2,7 +2,6 @@ import React, { useState} from "react";
 import ScheduleSelector from "react-schedule-selector";
 import Select from "react-select";
 import Navbar from "./NavBar";
-import "react-datepicker/dist/react-datepicker.css";
 
 const values = [
     {label: "Custom Week", weekType: 0, dateFormat:"M/D"},
@@ -54,7 +53,7 @@ class CalendarView extends React.Component {
             name: "Hello",
             schedule: [],
             dateFormat: "M/D",
-            label: null,
+            label: "Custom Week",
             startDate: new Date(),
             numDays: 7, 
             minTime: 8,
@@ -169,7 +168,7 @@ class CalendarView extends React.Component {
                                 <p>Select the type of youFree you wish to create.</p>
                                 <Select
                                     options={values} 
-                                    placeholder={this.state.label}
+                                    defaultValue={this.state.label}
                                     onChange={this.handleDisplay}
                                 />
                             </div>
