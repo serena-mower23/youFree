@@ -27,6 +27,7 @@ const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnified
 let userCollection = null;
 let youFreeCollection = null;
 let newUser = false;
+let curUser = null  // I don't know if there's a better way to store this lol
 
 //connect to database and grab collection
 app.use( cookie({
@@ -139,7 +140,6 @@ app.post('/createYF', async (req, res) => {
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
-
   const update = {
     youFreeID: id, 
     userAvail: req.body.schedule
@@ -190,12 +190,27 @@ app.post('/grabTemplate', async function(req, res) {
   console.log("/grabTemplate")
   console.log(req.body)
   const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
-  console.log("checkl me out")
-  console.log(current)
-  console.log(current.startDate)
+  const users = await userCollection.findOne({"username":req.session.username})
+  let youFrees = []
+  let schedule = []
+  console.log("JKHDFLK")
+  console.log(users)
+  if (req.session.username === current.creator) {
+    youFrees = users.created
+  }
+  else {
+    youFrees = users.invited
+  } 
+
+  for (let i = 0; i < youFrees.length; i++) {
+    if (youFrees[i].youFreeID === req.body.youFreeID) {
+      schedule = youFrees[i].userAvail
+    }
+  }
   if (current !== null) {
     const body = {
       startDate: current.startDate,
+      schedule: schedule,
       numDays: current.numDays,
       dateFormat: current.dateFormat, 
       creator: current.creator,
@@ -203,7 +218,7 @@ app.post('/grabTemplate', async function(req, res) {
       users: current.users,
       youFreeID: current.youFreeID,
       currentUser: req.session.username
-  }
+    }
 
   res.json(body);
   }

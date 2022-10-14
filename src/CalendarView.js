@@ -31,6 +31,7 @@ class Template extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
+        this.props.parentCallBack(this.state.schedule)
     }
 
     render() {
@@ -118,10 +119,7 @@ class CalendarView extends React.Component {
             startDate: this.state.startDate,
             numDays: this.state.numDays
         }
-        console.log(json)
-        console.log("BAKSH")
         let body = JSON.stringify(json)
-        console.log(body)
 
         fetch('/createYF', {
             method:'POST',

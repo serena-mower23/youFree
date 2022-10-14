@@ -9,6 +9,7 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            currentUser: null,
             startDate: null,
             numDays: null,
             dateFormat: null, 
@@ -38,12 +39,10 @@ class EditView extends React.Component {
     const youFreeID = params.get("id");
 
         const param = {
-            youFreeID: youFreeID
+            youFreeID: youFreeID,
         }
 
     let body = JSON.stringify(param)
-    console.log("PLEASE")
-    console.log(body)
 
     const res =  await fetch("/grabTemplate", {
         method:"POST",
@@ -56,7 +55,8 @@ class EditView extends React.Component {
     console.log("please")
     console.log(json)
 
-    currentUser = json.currentUser;
+    currentUser = json.currentUser
+    this.setState({ currentUser: json.currentUser})
     this.setState({ schedule: json.schedule })
     this.setState({ startDate: json.startDate})
     this.setState({ numDays: json.numDays})
@@ -113,7 +113,7 @@ class EditView extends React.Component {
                                 numDays={this.state.numDays}
                                 minTime={8}
                                 maxTime={22}
-                                hourlyChunks={4}
+                                hourlyChunks={1}
                                 dateFormat={this.state.dateFormat}
                                 timeFormat={"h:mm a"}
                                 unselectedColor={"#FA3D24"}
@@ -145,7 +145,7 @@ class EditView extends React.Component {
                                 numDays={this.state.numDays}
                                 minTime={8}
                                 maxTime={22}
-                                hourlyChunks={4}
+                                hourlyChunks={1}
                                 dateFormat={this.state.dateFormat}
                                 timeFormat={"h:mm a"}
                                 unselectedColor={"#FA3D24"}
