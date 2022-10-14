@@ -209,6 +209,8 @@ app.post('/grabTemplate', async function(req, res) {
     }
   }
   if (current !== null) {
+    console.log("I'm over here")
+    console.log(current.availableTimes)
     const body = {
       name: current.name,
       startDate: current.startDate,
@@ -221,6 +223,8 @@ app.post('/grabTemplate', async function(req, res) {
       youFreeID: current.youFreeID,
       currentUser: req.session.username
     }
+
+    console.log(body.availableTimes)
 
   res.json(body);
   }
@@ -249,6 +253,16 @@ app.post('/grabTemplate', async function(req, res) {
 //   }
 //   res.json(result);
 // })
+
+app.get("/getUser", async (req, res) => {
+  const username = req.session.username
+
+  const json = {
+    username
+  }
+  res.json(json)
+
+})
 
 app.post("/update", async (req, res) => {
   console.log("/update request: ")

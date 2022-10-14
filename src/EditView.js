@@ -9,12 +9,14 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            ready: false
+            ready: false,
+            users: []
         }
 
       this.handleState = this.handleState.bind(this);
       this.handleLoad = this.handleLoad.bind(this);
       this.handleUpdate = this.handleUpdate.bind(this);
+      this.handleAvail = this.handleAvail.bind(this)
     }
 
     // handleNewUser = (newUser) => {
@@ -23,6 +25,46 @@ class EditView extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
+    }
+
+    handleAvail = availableTimes => {
+        // let userCountCompleted = 0;
+        let curAvail = availableTimes
+        let timesArray = []
+        
+        for(let x = 0; x < curAvail.length; x++) {
+            let timeCount = {
+                totalUsers: 1,
+                time: curAvail[x]
+            }
+            timesArray.push(timeCount)
+        }
+
+        for (let y = 0; y < timesArray.length; y++) {
+            let currTimeCount = timesArray[y]
+            let totalUsersUpdated = currTimeCount.totalUsers
+            let time = currTimeCount.time
+            if (this.state.users > 0) {
+                for (let i = 0; i < this.state.users.length; i++) {
+                    if (this.state.users[i].userAvail.length !== 0) {
+                        for (let j = 0; j < this.state.users[i].userAvail; j++) {
+       
+                            if (this.state.users[i].userAvail[j] === currTimeCount.time) {
+                                totalUsersUpdated++;
+                            }
+                        }
+                    }
+                }
+                currTimeCount = {
+                    totalUsers: totalUsersUpdated,
+                    time:time
+                }
+                timesArray[y] = currTimeCount
+            }
+        }
+
+        this.setState({ timesArray: timesArray})
+
     }
 
     handleUpdate = async (e) => {
@@ -68,6 +110,8 @@ class EditView extends React.Component {
             }
         })
         const json = await res.json()
+        console.log("PHINEASE")
+        console.log(json.availableTimes)
 
         currentUser = json.currentUser
         this.setState({ name: json.name})
@@ -77,12 +121,16 @@ class EditView extends React.Component {
         this.setState({ numDays: json.numDays})
         this.setState({ dateFormat: json.dateFormat})
         this.setState({ creator: json.creator})
-        this.setState({ availableTime: json.availableTime})
+        this.setState({ availableTimes: json.availableTimes})
         this.setState({ users: json.users})
         this.setState({ youFreeID: json.youFreeID})
 
-        this.setState({ready:true})
+        console.log("im here")
+        console.log(json.availableTimes)
 
+        this.handleAvail(json.availableTimes)
+
+        this.setState({ready:true})
 
         // const id = props.location.youFreeID
         // const creator = rops.location.creator
@@ -98,7 +146,7 @@ class EditView extends React.Component {
         //     method:'POST',
         //     body,
         //     headers: {
-        //         'Content-Type': 'application/json'
+        //     'Content-Type': 'application/json'
         //     }
         // })
         // .then(res => res.json())
@@ -146,8 +194,8 @@ class EditView extends React.Component {
                             <div className="col-md-4 themed-grid-col">
                                 <h4 className="text-center mt-5">Available Times</h4>
                                 <ul>
-                                    {this.state.schedule.map( (time, index) =>
-                                        <li>{}</li>
+                                    {this.state.timesArray.map( (time, index) =>
+                                        <li>{time.time}</li>
                                     )}
                                 </ul>
                             </div>
