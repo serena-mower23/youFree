@@ -152,6 +152,10 @@ app.post('/createYF', async (req, res) => {
   // res.redirect('http://localhost:8080/home')
 })
 
+// creating function to invite user to youFree
+
+
+
 //this doesn't do anything right
 
 // app.get('/loadYF', async function(req, res) {

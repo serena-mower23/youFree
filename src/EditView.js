@@ -112,12 +112,39 @@ class EditView extends React.Component {
         this.handleLoad()
     }
 
+    // handleNameChange = newName => {
+    //     this.setState({ready: false});
+    //     this.setState({name: newName.target.value});
+    // }
+
+    handleAddUser = selectedOption => {
+        console.log(this.state.users)
+        this.setState({users: users.append(selectedOption.addedUser)})
+        
+    }
+
+    handleUpdateAddedUsers = () => {
+        this.setState({ ready: true });
+        console.log(this.state.users)
+    }
+
     render() {
         if (this.state.ready) {
-            if (this.state.creator === currentUser) {
+            // if (this.state.creator === currentUser) {
                 return (
                     <div>
                         <Navbar />
+                        <div className="row justify-content-evenly">
+                        <div className="container mt-5 d-flex flex-column align-items-center">
+                        <div className="mb-3">
+                                    <label className="form-label" htmlFor="addedUser">Invite Users to This youFree:</label>
+                                    <input className="form-control" type="text" name="addedUser" id="addedUser" onChange={this.handleAddUser} required/>
+                                <div className="invalid-feedback">Please provide an existing username for your youFree.</div> 
+                                
+                                </div>
+                                <div className="d-grid d-sm-block text-center">
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
+                                </div>
                         <div className="col-md-6 themed-grid-col">
                             <p className="text-center">Click and drag to select your availability.</p>
                             <ScheduleSelector
@@ -135,50 +162,56 @@ class EditView extends React.Component {
                                 onChange={this.handleState}
                             />
                         </div>
+                        
+                        
                         <div className="col-md-3 themed-grid-col">
                             {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
                             {/* </form> */}
+                           
                         </div>
-                        <h1>Available times:</h1>
+                         <h1>Available times:</h1>
+                   
+                    </div>
+                    </div>
                     </div>
                 )
             }
-            else {
-                return (
-                    <div>
-                        <Navbar />
-                        <div className="col-md-6 themed-grid-col">
-                            <p className="text-center">Click and drag to select your availability.</p>
-                            <ScheduleSelector
-                                selection={this.state.schedule}
-                                startDate={this.state.startDate}
-                                numDays={this.state.numDays}
-                                minTime={8}
-                                maxTime={22}
-                                hourlyChunks={1}
-                                dateFormat={this.state.dateFormat}
-                                timeFormat={"h:mm a"}
-                                unselectedColor={"#FA3D24"}
-                                selectedColor={"rgba(80, 182, 51, 1)"}
-                                hoveredColor={"#ADB2AE"}
-                                onChange={this.handleState}
-                            />
-                        </div>
-                        <div className="col-md-3 themed-grid-col">
-                            {/* <form action="/create" method="PUT"> */}
-                                <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
-                                </div>
-                            {/* </form> */}
-                        </div>
-                    </div>
-                )
+            // else {
+            //     return (
+            //         <div>
+            //             <Navbar />
+            //             <div className="col-md-6 themed-grid-col">
+            //                 <p className="text-center">Click and drag to select your availability.</p>
+            //                 <ScheduleSelector
+            //                     selection={this.state.schedule}
+            //                     startDate={this.state.startDate}
+            //                     numDays={this.state.numDays}
+            //                     minTime={8}
+            //                     maxTime={22}
+            //                     hourlyChunks={1}
+            //                     dateFormat={this.state.dateFormat}
+            //                     timeFormat={"h:mm a"}
+            //                     unselectedColor={"#FA3D24"}
+            //                     selectedColor={"rgba(80, 182, 51, 1)"}
+            //                     hoveredColor={"#ADB2AE"}
+            //                     onChange={this.handleState}
+            //                 />
+            //             </div>
+            //             <div className="col-md-3 themed-grid-col">
+            //                 {/* <form action="/create" method="PUT"> */}
+            //                     <div className="d-grid d-sm-block text-center">
+            //                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
+            //                     </div>
+            //                 {/* </form> */}
+            //             </div>
+            //         </div>
+            //     )
             }
         }
-    }
-}
+    // }
+// }
 
 export default EditView;
