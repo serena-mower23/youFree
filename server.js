@@ -251,6 +251,42 @@ app.post('/grabTemplate', async function(req, res) {
 //   res.json(result);
 // })
 
+// add youFree to user's list of invited youFrees
+
+
+
+// add user to youFree's list of users
+app.post("/updateUsers", async (req, res) => {
+  console.log("/update users request: ")
+  console.log(req.body)
+  let updated = []
+
+  // current should be invited user
+  const current = await userCollection.findOne({"username":req.body.invitedUser})
+
+  // if (req.session.username === req.body.creator) {
+  // is this user already in the users list?
+  // is this user NOT the creator?
+    let curArray = current.invited
+    for (let i = 0; i < curArray.length; i++) {
+      if (curArray[i].youFreeID === req.body.youFreeID) {
+        const updatedBody = {
+          "youFreeID": req.body.youFreeID,
+          // update youFree's list of users
+          "users": req.body.users
+        }
+        updated.push(updatedBody)
+      } else {
+        updated.push(curArray[i])
+      }
+      userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
+    }
+  
+}
+//}
+)
+
+
 app.post("/update", async (req, res) => {
   console.log("/update request: ")
   console.log(req.body)
