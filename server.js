@@ -26,9 +26,7 @@ const uri = "mongodb+srv://"+process.env.MONGO_USER+":"+process.env.MONGO_PASS+"
 const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnifiedTopology:true });
 let userCollection = null;
 let youFreeCollection = null;
-let currentUser = null;
 let newUser = false
-let totalYouFrees = 0;
 
 //connect to database and grab collection
 app.use( cookie({
@@ -58,7 +56,6 @@ app.post('/login', (req, res) => {
       if (req.body.password === result[0].password) {
         newUser = false
         req.session.login = true
-        currentUser = req.session.username
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
@@ -71,7 +68,6 @@ app.post('/login', (req, res) => {
       req.body.created = []
       req.body.invited = []
       console.log(req.body)
-      currentUser = req.session.username
       userCollection.insertOne( req.body )
       res.redirect('http://localhost:8080/home')
     }
@@ -106,7 +102,7 @@ app.post('/view', (req, res) => {
   console.log("/view request: ")
   console.log(req.body)
   youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-  // youFreeCollection.find({"username": currentUser})
+  // youFreeCollection.find({"username": req.session.username})
   .toArray()
   .then(result => {
     res.json(result)
@@ -123,19 +119,20 @@ app.post('/create', async (req, res) => {
   const json = {
     name: req.body.name,
     users: [],
-    creator: currentUser,
+    creator: req.session.username,
     availableTimes: [],
     dateFormat: req.body.dateFormat,
     numDays: req.body.numDays,
     youFreeID: ""
   }
   await youFreeCollection.insertOne(json)
-  const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": currentUser}] })
+  const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
   const id = result._id.toString()
-  await youFreeCollection.updateOne({$and: [{"name" :req.body.name}, {"creator": currentUser}] }, {$set: {"youFreeID": id}})
+  await youFreeCollection.updateOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] }, {$set: {"youFreeID": id}})
 
-  const current = await userCollection.findOne({"username": currentUser})
+  const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
+  console.log(currentArray)
   const update = {
     youFreeID: id, 
     userAvail:[]
@@ -143,11 +140,10 @@ app.post('/create', async (req, res) => {
   currentArray.push(update)
 
   await userCollection.updateOne(
-    {"username": currentUser},
+    {"username": req.session.username},
     { $set: {"created": currentArray}}
   )
-
-  res.redirect('http://localhost:8080/home')
+  // res.redirect('http://localhost:8080/home')
 })
 
 app.get('/loadYF', async function(req, res) {
@@ -155,7 +151,7 @@ app.get('/loadYF', async function(req, res) {
   console.log(req.body)
   const data = await youFreeCollection.find({ }).toArray()
   let body = {
-    currentUser: currentUser,
+    username: req.session.username,
     youFreeInfo: data
   }
   res.json(body);
@@ -163,10 +159,10 @@ app.get('/loadYF', async function(req, res) {
 
 app.get('/eventsYF', async function(req, res) {
   console.log("/eventsYF request: ")
-  console.log(req.body)
+  //console.log(req.body)
   let createdArray = [];
   let invitedArray = [];
-  const current = await userCollection.findOne({"username":currentUser})
+  const current = await userCollection.findOne({"username":req.session.username})
   if (current.created !== null) {
     createdArray = current.created
   }
@@ -178,13 +174,14 @@ app.get('/eventsYF', async function(req, res) {
     "created": createdArray,
     "invited": invitedArray
   }
+
   res.json(body);
 })
 
 // app.post('/eventsYF', async function(req, res) {
 //   let createdArray = [];
 //   let invitedArray = [];
-//   const current = await userCollection.find({"username":currentUser}).toArray()
+//   const current = await userCollection.find({"username":req.session.username}).toArray()
 //   const curCreated = current[0] === null ? null : current[0].created
 //   const curInvited = current[0] === null ? null : current[0].invited
 
@@ -210,8 +207,8 @@ app.post('/getAvail', async function(req, res) {
   console.log(req.body)
   let selection = []
   let event = []
-  const current = await userCollection.findOne({"username":currentUser})
-  if (req.body.json.creator === currentUser) {
+  const current = await userCollection.findOne({"username":req.session.username})
+  if (req.body.json.creator === req.session.username) {
     event = current.created
   }
   else {
@@ -332,7 +329,10 @@ app.post('/grabName', async function(req, res) {
       sendName = current[i].name
     }
   }
-  res.json(sendName)
+  const json = {
+    name: sendName
+  }
+  res.json(json)
 })
 
 app.get('/*', function(req, res) {
