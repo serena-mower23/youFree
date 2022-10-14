@@ -139,12 +139,17 @@ class EditView extends React.Component {
                                 />
                                 {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center mt-4">
-                                        <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
-                                    </div>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
+                                </div>
                                 {/* </form> */}
                             </div>
                             <div className="col-md-4 themed-grid-col">
                                 <h4 className="text-center mt-5">Available Times</h4>
+                                <ul>
+                                    {this.state.schedule.map( (time, index) =>
+                                        <li>{}</li>
+                                    )}
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -154,29 +159,33 @@ class EditView extends React.Component {
                 return (
                     <div>
                         <Navbar />
-                        <div className="col-md-6 themed-grid-col">
-                            <p className="text-center">Click and drag to select your availability.</p>
-                            <ScheduleSelector
-                                selection={this.state.schedule}
-                                startDate={this.state.startDate}
-                                numDays={this.state.numDays}
-                                minTime={8}
-                                maxTime={22}
-                                hourlyChunks={1}
-                                dateFormat={this.state.dateFormat}
-                                timeFormat={"h:mm a"}
-                                unselectedColor={"#FA3D24"}
-                                selectedColor={"rgba(80, 182, 51, 1)"}
-                                hoveredColor={"#ADB2AE"}
-                                onChange={this.handleState}
-                            />
-                        </div>
-                        <div className="col-md-3 themed-grid-col">
-                            {/* <form action="/create" method="PUT"> */}
-                                <div className="d-grid d-sm-block text-center">
+                        <div className="row justify-content-evenly">
+                            <div className="col-md-6 themed-grid-col">
+                                <h1 className="text-center">{this.state.name}</h1>
+                                <p className="text-center">Click and drag to select your availability.</p>
+                                <ScheduleSelector
+                                    selection={this.state.schedule}
+                                    startDate={this.state.startDate}
+                                    numDays={this.state.numDays}
+                                    minTime={8}
+                                    maxTime={22}
+                                    hourlyChunks={1}
+                                    dateFormat={this.state.dateFormat}
+                                    timeFormat={"h:mm a"}
+                                    unselectedColor={"#FA3D24"}
+                                    selectedColor={"rgba(80, 182, 51, 1)"}
+                                    hoveredColor={"#ADB2AE"}
+                                    onChange={this.handleState}
+                                />
+                                {/* <form action="/create" method="PUT"> */}
+                                <div className="d-grid d-sm-block text-center mt-4">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                            {/* </form> */}
+                                {/* </form> */}
+                            </div>
+                            {/* <div className="col-md-4 themed-grid-col">
+                                
+                            </div> */}
                         </div>
                     </div>
                 )

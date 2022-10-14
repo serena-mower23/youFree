@@ -136,7 +136,9 @@ app.post('/createYF', async (req, res) => {
   await youFreeCollection.insertOne(json)
   const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
   const id = result._id.toString()
-  await youFreeCollection.updateOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] }, {$set: {"youFreeID": id}})
+  await youFreeCollection.updateOne(
+    {$and: [{"name" :req.body.name}, {"creator": req.session.username}] },
+    {$set: {"youFreeID": id, "availableTimes": req.body.schedule}})
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
@@ -214,7 +216,7 @@ app.post('/grabTemplate', async function(req, res) {
       numDays: current.numDays,
       dateFormat: current.dateFormat, 
       creator: current.creator,
-      availableTime: current.availableTime,
+      availableTimes: current.availableTimes,
       users: current.users,
       youFreeID: current.youFreeID,
       currentUser: req.session.username
