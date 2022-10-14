@@ -8,16 +8,14 @@ class Home extends React.Component {
         this.state = {
             created: [],
             invited: [],
-            test: "test",
             ready: false
         }
 
         this.handleLoad = this.handleLoad.bind(this)
-        // this.handleNewUser = this.handleNewUser.bind(this);
+        this.handleNewUser = this.handleNewUser.bind(this);
     }
 
     handleLoad = async () => {
-        // preventDefault()
         window.addEventListener('load', this.handleNewUser);
         const res = await fetch("/eventsYF", {
             method:'GET',
@@ -27,18 +25,13 @@ class Home extends React.Component {
         })
         const json = await res.json()
         console.log(json)
-        console.log(this.state.test)
         if (json.created.length > 0) {
-            console.log("here?")
             console.log(json.created)
             this.setState({ created: json.created })
-            console.log("ughhh")
         }
         if (json.invited.length > 0) {
-            console.log("or here?")
             this.setState({ invited: json.invited })
         }
-        console.log("or maybe here?")
         this.setState({ ready: true})
     }
 

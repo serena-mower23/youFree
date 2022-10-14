@@ -32,7 +32,7 @@ class EventCalendar extends React.Component {
             },
             body
         })
-        window.location.href = "http://localhost:8080/edit-calendar"
+        window.location.href = `http://localhost:8080/edit-calendar?id=${this.props.event.youFreeID}`
     }
 
     handleDelete( e, id, creator ) {
