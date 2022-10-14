@@ -51,7 +51,7 @@ class Navbar extends React.Component {
                                     </li>
                                 </ul>
                                 <form className="nav-item d-flex" action="/logout" method="POST">
-                                    <button className="nav-link btn btn-link" type="submit">Log out of {this.state.curUsername}</button>
+                                    <button className="nav-link btn btn-link" type="submit">Log out of @{this.state.curUsername}</button>
                                 </form>
                             </div>
                         </div>
