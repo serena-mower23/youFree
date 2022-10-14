@@ -31,6 +31,7 @@ class Template extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
+        this.props.parentCallBack(this.state.schedule)
     }
 
     render() {
@@ -118,12 +119,9 @@ class CalendarView extends React.Component {
             startDate: this.state.startDate,
             numDays: this.state.numDays
         }
-        console.log(json)
-        console.log("BAKSH")
         let body = JSON.stringify(json)
-        console.log(body)
 
-        fetch('/create', {
+        fetch('/createYF', {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -287,11 +285,11 @@ class CalendarView extends React.Component {
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 m-auto">
-                                    <form action="/create" method="POST">
+                                    {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
                                             <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
-                                    </form>
+                                    {/* </form> */}
                                 </div>
                                 <Template 
                                     selection={this.state.schedule} 
@@ -352,11 +350,11 @@ class CalendarView extends React.Component {
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 m-auto">
-                                    <form action="/create" method="POST">
+                                    {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
                                             <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
-                                    </form>
+                                    {/* </form> */}
                                 </div>
                                     <Template 
                                         selection={this.state.schedule} 

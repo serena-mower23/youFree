@@ -9,17 +9,12 @@ class EditView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            // startDate: null,
-            // numDays: null,
-            // dateFormat: null, 
-            // creator: null,
-            // availableTime: null,
-            // users: null,
-            // youFreeID: null
+            ready: false
         }
 
       this.handleState = this.handleState.bind(this);
       this.handleLoad = this.handleLoad.bind(this);
+      this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     // handleNewUser = (newUser) => {
@@ -28,7 +23,30 @@ class EditView extends React.Component {
 
     handleState = (newSchedule) => {
         this.setState({schedule: newSchedule});
-        console.log(this.state.schedule);
+    }
+
+    handleUpdate = async (e) => {
+        e.preventDefault
+        const param = {
+            youFreeID: this.state.youFreeID,
+            currentUser: currentUser, 
+            creator: this.state.creator,
+            users: this.state.users,
+            schedule: this.state.schedule
+        }
+
+    let body = JSON.stringify(param)
+
+    const res =  await fetch("/update", {
+        method:"POST",
+        body,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    console.log
+    // const json = await res.json()
+    // this.setState({ schedule: json.schedule})
     }
 
     handleLoad = async () => {
@@ -37,7 +55,7 @@ class EditView extends React.Component {
     const youFreeID = params.get("id");
 
         const param = {
-            youFreeID: youFreeID
+            youFreeID: youFreeID,
         }
 
     let body = JSON.stringify(param)
@@ -48,11 +66,11 @@ class EditView extends React.Component {
         headers: {
             "Content-Type": "application/json"
         }
-    }
-    )
+    })
     const json = await res.json()
 
-    currentUser = json.currentUser;
+    currentUser = json.currentUser
+    this.setState({ currentUser: json.currentUser})
     this.setState({ schedule: json.schedule })
     this.setState({ startDate: json.startDate})
     this.setState({ numDays: json.numDays})
@@ -62,9 +80,6 @@ class EditView extends React.Component {
     this.setState({ users: json.users})
     this.setState({ youFreeID: json.youFreeID})
 
-    console.log("hello")
-    console.log(this.state.numDays)
-    console.log("Im here now")
     this.setState({ready:true})
 
 
@@ -111,7 +126,7 @@ class EditView extends React.Component {
                                 numDays={this.state.numDays}
                                 minTime={8}
                                 maxTime={22}
-                                hourlyChunks={4}
+                                hourlyChunks={1}
                                 dateFormat={this.state.dateFormat}
                                 timeFormat={"h:mm a"}
                                 unselectedColor={"#FA3D24"}
@@ -121,11 +136,11 @@ class EditView extends React.Component {
                             />
                         </div>
                         <div className="col-md-3 themed-grid-col">
-                            <form action="/create" method="PUT">
+                            {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary">Update</button>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                            </form>
+                            {/* </form> */}
                         </div>
                         <h1>Available times:</h1>
                     </div>
@@ -143,7 +158,7 @@ class EditView extends React.Component {
                                 numDays={this.state.numDays}
                                 minTime={8}
                                 maxTime={22}
-                                hourlyChunks={4}
+                                hourlyChunks={1}
                                 dateFormat={this.state.dateFormat}
                                 timeFormat={"h:mm a"}
                                 unselectedColor={"#FA3D24"}
@@ -153,11 +168,11 @@ class EditView extends React.Component {
                             />
                         </div>
                         <div className="col-md-3 themed-grid-col">
-                            <form action="/create" method="PUT">
+                            {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center">
-                                    <button type="submit" className="btn btn-primary">Update</button>
+                                    <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                            </form>
+                            {/* </form> */}
                         </div>
                     </div>
                 )

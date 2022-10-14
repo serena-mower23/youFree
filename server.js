@@ -27,6 +27,7 @@ const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnified
 let userCollection = null;
 let youFreeCollection = null;
 let newUser = false;
+let curUser = null  // I don't know if there's a better way to store this lol
 
 //connect to database and grab collection
 app.use( cookie({
@@ -54,12 +55,10 @@ app.post('/login', (req, res) => {
 
     if (result.length > 0) {
       if (req.body.password === result[0].password) {
-        newUser = false
         req.session.login = true
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
-        newUser = false
         // stay at login page
         res.redirect('http://localhost:8080')
       }
@@ -68,9 +67,13 @@ app.post('/login', (req, res) => {
       req.body.created = []
       req.body.invited = []
       userCollection.insertOne( req.body )
+      req.session.login = true
       res.redirect('http://localhost:8080/home')
     }
   })
+  // .then(result => {
+  //   res.json(newUser)
+  // }).then( json => console.log(json))
 })
 
 app.post('/logout', (req, res, next) => {
@@ -97,25 +100,32 @@ client.connect()
   return youFreeCollection.find({ }).toArray()
 })
 
-app.post('/view', (req, res) => {
-  console.log("/view request: ")
-  console.log(req.body)
-  youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-  .toArray()
-  .then(result => {
-    res.json(result)
-  }).then( json => console.log(json))
-})
+
+//fun fact, didn't actually do anything cause we were redirecting in the client
+
+// app.post('/view', async (req, res) => {
+//   console.log("/view request: ")
+//   console.log(req.body)
+//   const result = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+//   console.log("Youadsfga")
+//   console.log(result.body)
+//   // const json = res.json(result)
+//   console.log("Here?")
+// })
 
 app.post('/newuser', (req, res) => {
   res.json({newUser: newUser})
+  if (newUser) {
+    newUser = false;
+  }
 })
 
-app.post('/create', async (req, res) => {
-  console.log("/create request: ")
+app.post('/createYF', async (req, res) => {
+  console.log("/createYF request: ")
   console.log(req.body)
   const json = {
     name: req.body.name,
+    startDate: req.body.startDate,
     users: [],
     creator: req.session.username,
     availableTimes: [],
@@ -130,13 +140,11 @@ app.post('/create', async (req, res) => {
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
-  console.log(currentArray)
   const update = {
     youFreeID: id, 
-    userAvail:req.body.schedule
+    userAvail: req.body.schedule
   }
   currentArray.push(update)
-
   await userCollection.updateOne(
     {"username": req.session.username},
     { $set: {"created": currentArray}}
@@ -144,16 +152,18 @@ app.post('/create', async (req, res) => {
   // res.redirect('http://localhost:8080/home')
 })
 
-app.get('/loadYF', async function(req, res) {
-  console.log("/loadYFrequest: ")
-  console.log(req.body)
-  const data = await youFreeCollection.find({ }).toArray()
-  let body = {
-    username: req.session.username,
-    youFreeInfo: data
-  }
-  res.json(body);
-})
+//this doesn't do anything right
+
+// app.get('/loadYF', async function(req, res) {
+//   console.log("/loadYFrequest: ")
+//   console.log(req.body)
+//   const data = await youFreeCollection.find({ }).toArray()
+//   let body = {
+//     username: req.session.username,
+//     youFreeInfo: data
+//   }
+//   res.json(body);
+// })
 
 app.get('/eventsYF', async function(req, res) {
   console.log("/eventsYF request: ")
@@ -178,11 +188,28 @@ app.get('/eventsYF', async function(req, res) {
 
 app.post('/grabTemplate', async function(req, res) {
   console.log("/grabTemplate")
-  const current = await youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
+  console.log(req.body)
+  const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
+  const users = await userCollection.findOne({"username":req.session.username})
+  let youFrees = []
+  let schedule = []
 
+  if (req.session.username === current.creator) {
+    youFrees = users.created
+  }
+  else {
+    youFrees = users.invited
+  } 
+
+  for (let i = 0; i < youFrees.length; i++) {
+    if (youFrees[i].youFreeID === req.body.youFreeID) {
+      schedule = youFrees[i].userAvail
+    }
+  }
   if (current !== null) {
     const body = {
       startDate: current.startDate,
+      schedule: schedule,
       numDays: current.numDays,
       dateFormat: current.dateFormat, 
       creator: current.creator,
@@ -190,7 +217,7 @@ app.post('/grabTemplate', async function(req, res) {
       users: current.users,
       youFreeID: current.youFreeID,
       currentUser: req.session.username
-  }
+    }
 
   res.json(body);
   }
@@ -219,6 +246,44 @@ app.post('/grabTemplate', async function(req, res) {
 //   }
 //   res.json(result);
 // })
+
+app.post("/update", async (req, res) => {
+  console.log("/update request: ")
+  console.log(req.body)
+  let updated = []
+  const current = await userCollection.findOne({"username":req.session.username})
+
+  if (req.session.username === req.body.creator) {
+    let curArray = current.created
+    for (let i = 0; i < curArray.length; i++) {
+      if (curArray[i].youFreeID === req.session.username) {
+        const updatedBody = {
+          "youFreeID": req.session.username,
+          "userAvail": req.body.schedule
+        }
+        updated.push(updatedBody)
+      } else {
+        updated.push(curArray[i])
+      }
+      userCollection.updateOne({"username":req.session.username}, {$set: {"created": updated}})
+    }
+  }
+  else {
+    let curArray = current.invited
+    for (let i = 0; i < curArray.length; i++) {
+      if (curArray[i].youFreeID === req.session.username) {
+        const updatedBody = {
+          "youFreeID": req.session.username,
+          "userAvail": req.body.schedule
+        }
+        updated.push(updatedBody)
+      } else {
+        updated.push(curArray[i])
+      }
+      userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
+    }
+  }
+})
 
 app.post('/getAvail', async function(req, res) {
   console.log("/getAvail request: ")

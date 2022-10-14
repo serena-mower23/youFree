@@ -36,21 +36,17 @@ class Home extends React.Component {
     }
 
 
-    handleNewUser = () => {
+    async handleNewUser() {
         let body = ""
-        fetch( '/newuser', {
+        const res = await fetch( '/newuser', {
           method:'POST',
           headers: { 'Content-Type': 'application/json' },
           body
         })
-        .then( function( response ) {
-          return response.json()
-        })
-        .then ( function ( json ) {
+        const json = await res.json()
           if (json.newUser) {
             alert("New user created!")
           }
-        })
     }
     
     componentDidMount() {
