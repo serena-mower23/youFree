@@ -26,9 +26,7 @@ const uri = "mongodb+srv://"+process.env.MONGO_USER+":"+process.env.MONGO_PASS+"
 const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnifiedTopology:true });
 let userCollection = null;
 let youFreeCollection = null;
-let currentUser = null;
 let newUser = false
-let totalYouFrees = 0;
 
 //connect to database and grab collection
 app.use( cookie({
@@ -46,6 +44,8 @@ client.connect()
 })
 
 app.post('/login', (req, res) => {
+  console.log("/login request: ")
+  console.log(req.body)
   userCollection.find({username: req.body.username})
   .toArray()
   .then(result => {
@@ -56,7 +56,6 @@ app.post('/login', (req, res) => {
       if (req.body.password === result[0].password) {
         newUser = false
         req.session.login = true
-        // currentUser = req.session.username
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
@@ -75,6 +74,8 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/logout', (req, res, next) => {
+  console.log("/logout request: ")
+  console.log(req.body)
   req.session.login = false
   next()
 })
@@ -97,12 +98,14 @@ client.connect()
 })
 
 app.post('/view', (req, res) => {
+  console.log("/view request: ")
+  console.log(req.body)
   youFreeCollection.find({_id: mongodb.ObjectId(req.body.youFreeID)})
-  // youFreeCollection.find({"username": currentUser})
+  // youFreeCollection.find({"username": req.session.username})
   .toArray()
   .then(result => {
     res.json(result)
-  })
+  }).then( json => console.log(json))
 })
 
 app.post('/newuser', (req, res) => {
@@ -110,7 +113,7 @@ app.post('/newuser', (req, res) => {
 })
 
 app.post('/create', async (req, res) => {
-  console.log("HEHE")
+  console.log("/create request: ")
   console.log(req.body)
   const json = {
     name: req.body.name,
@@ -128,6 +131,7 @@ app.post('/create', async (req, res) => {
 
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
+  console.log(currentArray)
   const update = {
     youFreeID: id, 
     userAvail:[]
@@ -138,20 +142,23 @@ app.post('/create', async (req, res) => {
     {"username": req.session.username},
     { $set: {"created": currentArray}}
   )
-
-  res.redirect('http://localhost:8080/home')
+  // res.redirect('http://localhost:8080/home')
 })
 
 app.get('/loadYF', async function(req, res) {
+  console.log("/loadYFrequest: ")
+  console.log(req.body)
   const data = await youFreeCollection.find({ }).toArray()
   let body = {
-    currentUser: req.session.username,
+    username: req.session.username,
     youFreeInfo: data
   }
   res.json(body);
 })
 
 app.get('/eventsYF', async function(req, res) {
+  console.log("/eventsYF request: ")
+  //console.log(req.body)
   let createdArray = [];
   let invitedArray = [];
   const current = await userCollection.findOne({"username":req.session.username})
@@ -161,24 +168,19 @@ app.get('/eventsYF', async function(req, res) {
   if (current.invited !== null) {
     invitedArray = current.invited
   }
-
-  // for (let i = 0; i < curCreated.length; i++) {
-  //   let id = curCreated[i].youFreeID 
-  //   const result = await youFreeCollection.findOne({"_id": id})   
-  //   let objString = c[i]._id.toString()
-  // }
-
+  
   let body = {
     "created": createdArray,
     "invited": invitedArray
   }
+
   res.json(body);
 })
 
 // app.post('/eventsYF', async function(req, res) {
 //   let createdArray = [];
 //   let invitedArray = [];
-//   const current = await userCollection.find({"username":currentUser}).toArray()
+//   const current = await userCollection.find({"username":req.session.username}).toArray()
 //   const curCreated = current[0] === null ? null : current[0].created
 //   const curInvited = current[0] === null ? null : current[0].invited
 
@@ -200,6 +202,8 @@ app.get('/eventsYF', async function(req, res) {
 // })
 
 app.post('/getAvail', async function(req, res) {
+  console.log("/getAvail request: ")
+  console.log(req.body)
   let selection = []
   let event = []
   const current = await userCollection.findOne({"username":req.session.username})
@@ -314,6 +318,8 @@ app.post('/delete', (req, res) => {
 })
 
 app.post('/grabName', async function(req, res) {
+  console.log("/grabName request: ")
+  console.log(req.body)
   const current = await youFreeCollection.find({}).toArray()
   let sendName = ""
   for (let i = 0; i < current.length; i++) {
@@ -322,7 +328,10 @@ app.post('/grabName', async function(req, res) {
       sendName = current[i].name
     }
   }
-  res.json(sendName)
+  const json = {
+    name: sendName
+  }
+  res.json(json)
 })
 
 app.get('/*', function(req, res) {

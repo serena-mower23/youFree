@@ -19,7 +19,6 @@ const days = [
     {label: "Saturday", startDate: new Date("10-15-2022")},
 ]
 
-
 class Template extends React.Component {
     constructor(props) {
         super(props)
@@ -123,20 +122,19 @@ class CalendarView extends React.Component {
         console.log(json)
         console.log("BAKSH")
         let body = JSON.stringify(json)
+        console.log(body)
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        fetch('/create', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body
-        };
-        fetch('/create', requestOptions)
-        .then(res => res.json())
-        .then(json => {
-            console.log(json)
         })
+        window.location.href = "http://localhost:8080/home"
     }
 
-    handleNumChange = newNum => {
+    handleNumChange = (newNum) => {
         this.setState({ready: false});
         this.setState({numDays: newNum.target.value})
     }

@@ -7,7 +7,9 @@ class EventCalendar extends React.Component {
             name: "Holder", 
             ready: false
         }
-    } 
+
+        this.handleView = this.handleView.bind(this)
+    }
 
     handleView( e ) {
         // handleView( e, id )
@@ -30,10 +32,6 @@ class EventCalendar extends React.Component {
             },
             body
         })
-        // .then(response => response.json())
-        // .then(json => {
-            
-        // })
         window.location.href = "http://localhost:8080/edit-calendar"
     }
 
@@ -55,29 +53,26 @@ class EventCalendar extends React.Component {
         })
     }
 
-    componentDidMount( e ) {
+    async componentDidMount( e ) {
         // e.preventDefault()
-        const json = {
+        const props = {
             "youFreeID": this.props.event.youFreeID
         }
 
-        let body = JSON.stringify(json)
-        fetch("/grabName", {
+        let body = JSON.stringify(props)
+        const res = await fetch("/grabName", {
             method:'POST',
             body,
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(res => res.json())
-        .then(json => {
-            this.setState({ name: json.name })
-            this.setState({ ready: true})
-        })
+        const json = await res.json()
+        this.setState({ name: json.name })
+        this.setState({ ready: true})
     }
 
-    render() {            
-        this.componentDidMount()
+    render() {
         if (this.state.ready) {
             return (
                 <div className="card mb-3">

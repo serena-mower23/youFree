@@ -19,6 +19,7 @@ class EditView extends React.Component {
         }
 
       this.handleState = this.handleState.bind(this);
+      this.handleLoad = this.handleLoad.bind(this);
     }
 
     // handleNewUser = (newUser) => {
@@ -30,8 +31,8 @@ class EditView extends React.Component {
         console.log(this.state.schedule);
     }
 
-    componentDidMount = ( e ) => {
-        // e.preventDefault()
+    handleLoad = e => {
+        e.preventDefault()
         const id = props.location.youFreeID
         const creator = props.location.creator
 
@@ -55,13 +56,16 @@ class EditView extends React.Component {
             this.setState({ schedule: json.schedule })
             this.setState({ready:true})
         })
+    }
 
+    componentDidMount() {
+        this.handleLoad()
     }
 
     render() {
-        // this.componentDidMount()
+        this.componentDidMount()
         if (this.state.ready) {
-            if (props.location.creator === currentUser) {
+            if (this.state.creator === currentUser) {
                 return (
                     <div>
                         <Navbar />
