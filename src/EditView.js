@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar";
 import ScheduleSelector from "react-schedule-selector";
 import 'url-search-params-polyfill';
 
