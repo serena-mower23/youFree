@@ -112,20 +112,15 @@ app.post('/createYF', async (req, res) => {
     type: req.body.type
   }
   const cur = await youFreeCollection.find({}).toArray()
-  let success = false
+  let success = true
   if (cur.length === 0) {
     success = true
   }
   else {
     for (let i = 0; i < cur.length; i++) {
       let usedName = cur[i].name
-      console.log("usedName: " + usedName)
-      console.log("request name: " + req.body.name)
       if (req.body.name === usedName) {
         success = false
-      }
-      else {
-        success = true
       }
     }
   }
