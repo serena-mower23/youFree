@@ -1,6 +1,6 @@
 import React from "react";
 import EventGroup from "./EventGroup";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar";
 
 class Home extends React.Component {
     constructor(props) {
