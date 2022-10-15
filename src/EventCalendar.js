@@ -34,7 +34,7 @@ class EventCalendar extends React.Component {
 
     handleView( e ) {
         e.preventDefault()
-        window.location.href = `/edit-calendar?id=${this.props.event.youFreeID}`
+        window.location.href = `https://you-free-cz3kx.ondigitalocean.app/edit-calendar?id=${this.props.event.youFreeID}`
     }
 
     handleDelete( e, id, creator ) {
