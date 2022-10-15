@@ -129,7 +129,15 @@ class CalendarView extends React.Component {
             },
             body
         })
-        .then(window.location.href = "http://localhost:8080/home", true)
+        .then(response => response.json())
+        .then(json => { 
+            if (json.success) {
+                window.location.href = "http://localhost:8080/home", true
+            }
+            else {
+                alert("You can't create youFrees with duplicate names.")
+            }
+        })
     }
 
     handleNumChange = (newNum) => {

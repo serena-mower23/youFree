@@ -100,6 +100,7 @@ app.post('/newuser', (req, res) => {
 //post request for creating a youFree
 app.post('/createYF', async (req, res) => {
   console.log("/createYF request: ")
+  console.log(req.body)
   const json = {
     name: req.body.name,
     startDate: req.body.startDate,
@@ -110,26 +111,48 @@ app.post('/createYF', async (req, res) => {
     youFreeID: "",
     type: req.body.type
   }
-  //add new youFree document to database
-  await youFreeCollection.insertOne(json)
-  const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
-  const id = result._id.toString()
-  await youFreeCollection.updateOne(
-    {$and: [{"name" :req.body.name}, {"creator": req.session.username}] },
-    {$set: {"youFreeID": id, "type": req.body.type}})
-
-  //add youFreeID to created array for user  
-  const current = await userCollection.findOne({"username": req.session.username})
-  currentArray = current.created
-  const update = {
-    youFreeID: id, 
-    userAvail: req.body.schedule
+  const cur = await youFreeCollection.find({}).toArray()
+  let success = false
+  if (cur.length === 0) {
+    success = true
   }
-  currentArray.push(update)
-  await userCollection.updateOne(
-    {"username": req.session.username},
-    { $set: {"created": currentArray}}
-  )
+  else {
+    for (let i = 0; i < cur.length; i++) {
+      let usedName = cur[i].name
+      console.log("usedName: " + usedName)
+      console.log("request name: " + req.body.name)
+      if (req.body.name === usedName) {
+        success = false
+      }
+      else {
+        success = true
+      }
+    }
+  }
+
+  if (success) {
+    //add new youFree document to database
+    await youFreeCollection.insertOne(json)
+    const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
+    const id = result._id.toString()
+    await youFreeCollection.updateOne(
+      {$and: [{"name" :req.body.name}, {"creator": req.session.username}] },
+      {$set: {"youFreeID": id, "type": req.body.type}})
+
+    //add youFreeID to created array for user  
+    const current = await userCollection.findOne({"username": req.session.username})
+    currentArray = current.created
+    const update = {
+      youFreeID: id, 
+      userAvail: req.body.schedule
+    }
+    currentArray.push(update)
+    await userCollection.updateOne(
+      {"username": req.session.username},
+      { $set: {"created": currentArray}}
+    )
+  }
+  res.json({success: success})
 })
 
 //get request for grabbing users created and invited to arrays
