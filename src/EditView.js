@@ -41,12 +41,11 @@ class EditView extends React.Component {
             }
         })
         const json = await res.json()
-        console.log(json)
 
-        console.log("brooo")
-        console.log(json)
         let timesArray = json;
         let changedTimes = []    
+
+        //changes from UTC string to better format
         for (let i = 0; i < timesArray.length; i++) {
             let date = new Date(timesArray[i])
             let dateString = ""
@@ -61,72 +60,9 @@ class EditView extends React.Component {
             }
             changedTimes.push(dateString)
         }
-        console.log("PRETTY PLEASE")
-        console.log(changedTimes)
         this.setState({ timesArray: changedTimes})
         this.setState({ready:true})
     }
-
-    // handleAvail = (availableTimes, type) => {
-    //     console.log(availableTimes)
-    //     let curAvail = availableTimes
-    //     let timesArray = []
-        
-    //     for(let x = 0; x < curAvail.length; x++) {
-    //         let timeCount = {
-    //             totalUsers: 1,
-    //             time: curAvail[x]
-    //         }
-    //         timesArray.push(timeCount)
-    //     }
-
-    //     for (let y = 0; y < timesArray.length; y++) {
-    //         let currTimeCount = timesArray[y]
-    //         let totalUsersUpdated = currTimeCount.totalUsers
-    //         let time = currTimeCount.time
-    //         if (this.state.users > 0) {
-    //             for (let i = 0; i < this.state.users.length; i++) {
-    //                 if (this.state.users[i].userAvail.length !== 0) {
-    //                     for (let j = 0; j < this.state.users[i].userAvail; j++) {
-       
-    //                         if (this.state.users[i].userAvail[j] === currTimeCount.time) {
-    //                             totalUsersUpdated++;
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //             currTimeCount = {
-    //                 totalUsers: totalUsersUpdated,
-    //                 time:time
-    //             }
-    //             timesArray[y] = currTimeCount
-    //         }
-    //     }
-
-    //     let changedTimes = []    
-    //     for (let i = 0; i < timesArray.length; i++) {
-    //         console.log(timesArray[i])
-    //         let date = new Date(timesArray[i].time)
-    //         let dateString = ""
-
-    //         console.log("WHYYY")
-    //         console.log(type)
-
-    //         if (type === 0) {
-    //             dateString = date.toLocaleString()
-    //         }
-    //         else if (type === 1) {
-    //             let dateStringFirst = date.toLocaleString('en-us', {  weekday: 'long' })
-    //             let second = date.toLocaleTimeString()
-    //             console.log(second)
-    //             dateString = dateStringFirst + ", " + second
-    //         }
-    //         console.log(dateString)
-    //         changedTimes.push(dateString)
-    //     }
-    //     this.setState({ timesArray: changedTimes})
-    // }
-
 
     handleUpdate = async (e) => {
         const param = {
@@ -169,9 +105,6 @@ class EditView extends React.Component {
         })
         const json = await res.json()
 
-        console.log("jfhasd")
-        console.log(json)
-
         currentUser = json.currentUser
         this.setState({ name: json.name})
         this.setState({ currentUser: json.currentUser})
@@ -180,18 +113,12 @@ class EditView extends React.Component {
         this.setState({ numDays: json.numDays})
         this.setState({ dateFormat: json.dateFormat})
         this.setState({ creator: json.creator})
-        this.setState({ availableTimes: json.availableTimes})
         this.setState({ users: json.users})
         this.setState({ youFreeID: json.youFreeID})
         this.setState({type:json.type})
 
         this.handleAvail(json.youFreeID, json.creator, json.users, json.type)
     }
-
-    // handleNameChange = newName => {
-    //     this.setState({ready: false});
-    //     this.setState({name: newName.target.value});
-    // }
 
     handleAddUser = addedUser => {
         this.setState({addedUser: addedUser.target.value})        
@@ -231,7 +158,6 @@ class EditView extends React.Component {
                     // 1 if user doesn't exist
                     // 2 if user exists and isn't already added
                     // 3 if user exists and is already added
-                    console.log(json.userExists)
                     if (json.userExists === 1) { 
                         alert("This user doesn't exist.")
                     } 
@@ -273,7 +199,6 @@ class EditView extends React.Component {
                                             <div class="input-group-text">@</div>
                                             <input className="form-control" type="text" name="addedUser" id="addedUser" placeholder="Username" onChange={this.handleAddUser} required/>
                                         </div>
-                                        {/* <div className="invalid-feedback">Please provide an existing username for your youFree.</div>  */}
                                     </div>
                                     <div className="d-grid d-sm-block col-12">
                                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
@@ -294,11 +219,9 @@ class EditView extends React.Component {
                                     hoveredColor={"#ADB2AE"}
                                     onChange={this.handleState}
                                 />
-                                {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center mt-4 mb-5">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                                {/* </form> */}
                             </div>
                             <div className="col-md-4 themed-grid-col">
                                 <h4 className="text-center mt-5">Available Times</h4>
@@ -338,15 +261,10 @@ class EditView extends React.Component {
                                     hoveredColor={"#ADB2AE"}
                                     onChange={this.handleState}
                                 />
-                                {/* <form action="/create" method="PUT"> */}
                                 <div className="d-grid d-sm-block text-center mt-4">
                                     <button type="submit" className="btn btn-primary" onClick={this.handleUpdate}>Update</button>
                                 </div>
-                                {/* </form> */}
                             </div>
-                            {/* <div className="col-md-4 themed-grid-col">
-                                
-                            </div> */}
                         </div>
                     </div>
                 )

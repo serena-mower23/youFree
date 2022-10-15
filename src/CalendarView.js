@@ -18,6 +18,7 @@ const days = [
     {label: "Saturday", startDate: new Date("10-15-2022")},
 ]
 
+//scheduler selector template
 class Template extends React.Component {
     constructor(props) {
         super(props)
@@ -30,10 +31,7 @@ class Template extends React.Component {
     }
 
     handleState = (newSchedule) => {
-        let origSchedule = this.state.schedule;
-        console.log("Orig Sch: " + origSchedule);
         this.setState({schedule: newSchedule});
-        // this.setState({schedule: [...origSchedule, ...newSchedule]})
         this.props.parentCallBack(this.state.schedule)
     }
 
@@ -93,8 +91,6 @@ class CalendarView extends React.Component {
 
     handleCallBack = (newSchedule) => {
         this.setState({ schedule: newSchedule })
-        console.log("Ar eyou here")
-        console.log(this.state.schedule)
     }
   
     handleUpdate = () => {
@@ -115,11 +111,7 @@ class CalendarView extends React.Component {
         }
     }
 
-    handleCreate = e => {
-        e.preventDefault()
-        console.log("schedule")
-        console.log(this.state.schedule)
-        console.log("sir")
+    handleCreate = () => {
         const json = {
             schedule:this.state.schedule,
             name:this.state.name,
@@ -129,8 +121,6 @@ class CalendarView extends React.Component {
             type: this.state.weekType
         }
         let body = JSON.stringify(json)
-        console.log("YOU MAKE NOWSNESE")
-        console.log(body)
 
         fetch('/createYF', {
             method:'POST',
@@ -154,6 +144,8 @@ class CalendarView extends React.Component {
     }
 
     render() {
+        //first if determines whether all the information is ready to load
+        //inner if determines whether specific days or generic week
         if (this.state.ready === false) {
             if (this.state.weekType === 0) {
             return (
@@ -296,11 +288,9 @@ class CalendarView extends React.Component {
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 ms-5 m-auto">
-                                    {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
                                             <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
-                                    {/* </form> */}
                                 </div>
                                 <Template 
                                     selection={this.state.schedule} 
@@ -361,11 +351,9 @@ class CalendarView extends React.Component {
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
                                 <div className="mb-5 ms-5 m-auto">
-                                    {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
-                                            <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
+                                            <button type="submit" className="btn btn-primary"onClick={this.handleCreate}>Create youFree?</button>
                                         </div>
-                                    {/* </form> */}
                                 </div>
                                     <Template 
                                         selection={this.state.schedule} 

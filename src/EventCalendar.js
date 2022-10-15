@@ -10,6 +10,26 @@ class EventCalendar extends React.Component {
         }
 
         this.handleView = this.handleView.bind(this)
+        this.handleLoad = this.handleLoad.bind(this)
+    }
+
+    async handleLoad() {
+        const props = {
+            "youFreeID": this.props.event.youFreeID
+        }
+
+        let body = JSON.stringify(props)
+        const res = await fetch("/getInfo", {
+            method:'POST',
+            body,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        const json = await res.json()
+        this.setState({ name: json.name })
+        this.setState({ creator: json.creator })
+        this.setState({ ready: true})
     }
 
     handleView( e ) {
@@ -36,24 +56,8 @@ class EventCalendar extends React.Component {
         .then(window.location.href = "http://localhost:8080/home", true)
     }
 
-    async componentDidMount( e ) {
-        // e.preventDefault()
-        const props = {
-            "youFreeID": this.props.event.youFreeID
-        }
-
-        let body = JSON.stringify(props)
-        const res = await fetch("/getInfo", {
-            method:'POST',
-            body,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        const json = await res.json()
-        this.setState({ name: json.name })
-        this.setState({ creator: json.creator })
-        this.setState({ ready: true})
+    async componentDidMount() {
+        this.handleLoad()
     }
 
     render() {

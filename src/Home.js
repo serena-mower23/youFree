@@ -17,7 +17,7 @@ class Home extends React.Component {
 
     handleLoad = async () => {
         window.addEventListener('load', this.handleNewUser);
-        const res = await fetch("/eventsYF", {
+        const res = await fetch("/getYFs", {
             method:'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,23 +55,6 @@ class Home extends React.Component {
         if (this.state.ready) {
             return (
                 <div>
-                    {/* <div className="modal fade">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    Hello
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-            
-                            </div>
-                        </div>
-
-                    </div> */}
                     <div className="container">
                         <Navbar />
                         <EventGroup title={"My Events"} message={"You don't have any created events."} events={this.state.created} />

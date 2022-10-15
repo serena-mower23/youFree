@@ -16,7 +16,6 @@ const client = new mongodb.MongoClient( uri, { useNewURLParser: true, useUnified
 let userCollection = null;
 let youFreeCollection = null;
 let newUser = false;
-let curUser = null  // I don't know if there's a better way to store this lol
 
 //connect to database and grab collection
 app.use( cookie({
@@ -33,6 +32,7 @@ client.connect()
     return userCollection.find({ }).toArray()
 })
 
+//post request for logging in
 app.post('/login', (req, res) => {
   console.log("/login request: ")
   console.log(req.body)
@@ -45,7 +45,6 @@ app.post('/login', (req, res) => {
     if (result.length > 0) {
       if (req.body.password === result[0].password) {
         req.session.login = true
-        console.log("DO YOU EVEN GO HERE")
         // redirect to home page
         res.redirect('http://localhost:8080/home')
       } else {
@@ -56,16 +55,16 @@ app.post('/login', (req, res) => {
       newUser = true
       req.body.created = []
       req.body.invited = []
+      //creates a new user in the database 
       userCollection.insertOne( req.body )
       req.session.login = true
+      //redirect to home page
       res.redirect('http://localhost:8080/home')
     }
   })
-  // .then(result => {
-  //   res.json(newUser)
-  // }).then( json => console.log(json))
 })
 
+//post request for logging out
 app.post('/logout', (req, res, next) => {
   console.log("/logout request: ")
   console.log(req.body)
@@ -90,6 +89,7 @@ client.connect()
   return youFreeCollection.find({ }).toArray()
 })
 
+//post request to check if new user in order to make alert
 app.post('/newuser', (req, res) => {
   res.json({newUser: newUser})
   if (newUser) {
@@ -97,30 +97,28 @@ app.post('/newuser', (req, res) => {
   }
 })
 
+//post request for creating a youFree
 app.post('/createYF', async (req, res) => {
   console.log("/createYF request: ")
-  console.log("i swear")
-  console.log(req.body)
   const json = {
     name: req.body.name,
     startDate: req.body.startDate,
     users: [],
     creator: req.session.username,
-    availableTimes: req.body.schedule,
     dateFormat: req.body.dateFormat,
     numDays: req.body.numDays,
     youFreeID: "",
     type: req.body.type
   }
-  console.log("sadgfads")
-  console.log(req.body.type)
+  //add new youFree document to database
   await youFreeCollection.insertOne(json)
   const result = await youFreeCollection.findOne({$and: [{"name" :req.body.name}, {"creator": req.session.username}] })
   const id = result._id.toString()
   await youFreeCollection.updateOne(
     {$and: [{"name" :req.body.name}, {"creator": req.session.username}] },
-    {$set: {"youFreeID": id, "availableTimes": req.body.schedule, "type": req.body.type}})
+    {$set: {"youFreeID": id, "type": req.body.type}})
 
+  //add youFreeID to created array for user  
   const current = await userCollection.findOne({"username": req.session.username})
   currentArray = current.created
   const update = {
@@ -132,18 +130,15 @@ app.post('/createYF', async (req, res) => {
     {"username": req.session.username},
     { $set: {"created": currentArray}}
   )
-  // res.redirect('http://localhost:8080/home')
 })
 
-
-
-
-
-app.get('/eventsYF', async function(req, res) {
-  console.log("/eventsYF request: ")
+//get request for grabbing users created and invited to arrays
+app.get('/getYFs', async function(req, res) {
+  console.log("/getYFs request: ")
   let createdArray = [];
   let invitedArray = [];
   const current = await userCollection.findOne({"username":req.session.username})
+
   if (current.created !== null) {
     createdArray = current.created
   }
@@ -159,6 +154,8 @@ app.get('/eventsYF', async function(req, res) {
   res.json(body);
 })
 
+//post request to grab the necessary state elements to structure the youFree ScheduleSelector
+//grabs additonal information as well
 app.post('/grabTemplate', async function(req, res) {
   console.log("/grabTemplate")
   console.log(req.body)
@@ -174,6 +171,7 @@ app.post('/grabTemplate', async function(req, res) {
     youFrees = users.invited
   } 
 
+  //grabs the user's availability for the youFreeID
   for (let i = 0; i < youFrees.length; i++) {
     if (youFrees[i].youFreeID === req.body.youFreeID) {
       schedule = youFrees[i].userAvail
@@ -187,22 +185,16 @@ app.post('/grabTemplate', async function(req, res) {
       numDays: current.numDays,
       dateFormat: current.dateFormat, 
       creator: current.creator,
-      availableTimes: current.availableTimes,
       users: current.users,
       youFreeID: current.youFreeID,
       currentUser: req.session.username,
       type: current.type
-    }
-   console.log(body) 
+    } 
   res.json(body);
   }
 })
 
-// add youFree to user's list of invited youFrees
-
-
-// creating function to invite user to youFree
-// add user to youFree's list of users
+//post request to add youFree to user's list of invited youFrees
 app.post("/updateUsers", async (req, res) => {
   console.log("/update users request: ")
   console.log(req.body)
@@ -210,11 +202,6 @@ app.post("/updateUsers", async (req, res) => {
   // 2 if user exists and isn't already added
   // 3 if user exists and is already added
   let userExists = -1
-
-
-  // if (req.session.username === req.body.creator) {
-  // is this user already in the users list?
-  // is this user NOT the creator?
 
   const user = await userCollection.findOne({"username": req.body.invitedUser})
   const current = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
@@ -251,10 +238,10 @@ app.post("/updateUsers", async (req, res) => {
       userExists = 3
     }
   }
-
   res.json({userExists: userExists})
 })
 
+//get request for grabbing the username for the Navbar display
 app.get("/getUser", async (req, res) => {
   const username = req.session.username
 
@@ -265,44 +252,7 @@ app.get("/getUser", async (req, res) => {
 
 })
 
-// app.post("/update", async (req, res) => {
-//   console.log("/update")
-//   console.log(req.body)
-//   const youFreeInfo = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
-//   const userInfo = await userCollection.findOne({"username": req.session.username})
-  
-//   if (req.session.username === req.body.creator) {
-//     let curArray = userInfo.created
-//     for (let i = 0; i < curArray.length; i++) {
-//       if (curArray[i].youFreeID === req.body.youFreeID) {
-//         const updatedBody = {
-//           "youFreeID": req.body.youFreeID,
-//           "userAvail": req.body.schedule
-//         }
-//         updated.push(updatedBody)
-//       } else {
-//         updated.push(curArray[i])
-//       }
-//       userCollection.updateOne({"username":req.session.username}, {$set: {"created": updated}})
-//       let availTimes = youFree.availableTimes 
-//       let newTimes = []
-//       if (availTimes.length === 0) {
-//         newTimes = req.body.schedule
-//       }
-//       else {
-//         for (let i = 0; i < availTimes.length; i++) {
-//           if (req.body.schedule.includes(availTimes[i])) {
-//             newTimes.push(availTimes[i])
-//           }
-//         }
-//       }
-//       console.log("resulting merge")
-//       console.log(newTimes)
-//       youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"availableTimes": newTimes}})
-//     }
-//   }
-// })
-
+//post request to update a users youFree availability
 app.post("/update", async (req, res) => {
   console.log("/update request: ")
   console.log(req.body)
@@ -310,37 +260,29 @@ app.post("/update", async (req, res) => {
   const current = await userCollection.findOne({"username":req.session.username})
   const youFree = await youFreeCollection.findOne({_id: mongodb.ObjectId(req.body.youFreeID)})
 
+  //checks to see if user created youFree
   if (req.session.username === req.body.creator) {
     let curArray = current.created
+    //loops through array of created youFrees
     for (let i = 0; i < curArray.length; i++) {
+
+      //updates the requested youFree
       if (curArray[i].youFreeID === req.body.youFreeID) {
         const updatedBody = {
           "youFreeID": req.body.youFreeID,
           "userAvail": req.body.schedule
         }
         updated.push(updatedBody)
-      } else {
+      } 
+      //adds other youFreeID objects to created array
+      else {
         updated.push(curArray[i])
       }
       userCollection.updateOne({"username":req.session.username}, {$set: {"created": updated}})
-
-      // let availTimes = youFree.availableTimes 
-      // let newTimes = []
-      // if (availTimes.length === 0) {
-      //   newTimes = req.body.schedule
-      // }
-      // else {
-      //   for (let i = 0; i < availTimes.length; i++) {
-      //     if (req.body.schedule.includes(availTimes[i])) {
-      //       newTimes.push(availTimes[i])
-      //     }
-      //   }
-      // }
-      // console.log("resulting merge")
-      // console.log(newTimes)
-      // youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"availableTimes": newTimes}})
     }
-  } else {
+  } 
+  //same as above but just for an invited user
+  else {
     let curArray = current.invited
     for (let i = 0; i < curArray.length; i++) {
       if (curArray[i].youFreeID === req.body.youFreeID) {
@@ -354,43 +296,28 @@ app.post("/update", async (req, res) => {
       }
       userCollection.updateOne({"username":req.session.username}, {$set: {"invited": updated}})
     }
-
-    // let availTimes = youFree.availableTimes 
-    // let newTimes = []
-    // if (availTimes.length === 0) {
-    //   newTimes = req.body.schedule
-    // } 
-    // else {
-    //   for (let i = 0; i < availTimes.length; i++) {
-    //     if (req.body.schedule.includes(availTimes[i])) {
-    //       newTimes.push(availTimes[i])
-    //     }
-    //   }
-    // }
-
-    // console.log("resulting merge")
-    // console.log(newTimes)
-    // youFreeCollection.updateOne({_id: mongodb.ObjectId(req.body.youFreeID)}, {$set: {"availableTimes": newTimes}})
-
   }
 })
 
+//post request that grabs the available times for the creator and users
 app.post('/getAvail', async function(req, res) {
   console.log("/getAvail request: ")
   console.log(req.body)
   let userCount = 0
+  let creatorFilled = false;
 
   let availTimes = []
-  console.log("SERIOPIS;")
-  console.log(req.body.creator)
-
   let creatorInfo = await userCollection.findOne({"username":req.body.creator})
-  console.log("creator info")
-  console.log(creatorInfo.created)
 
+  //loops through the creators list of created youFrees
   for (let i = 0; i < creatorInfo.created.length; i++) {
+    //finds requested youFree
     if (creatorInfo.created[i].youFreeID === req.body.youFreeID) {
+      //checks that the availability array contains selected times
+      //aka the creator has filled out the youFree
+      //pushes to total possible available times array
       if (creatorInfo.created[i].userAvail.length > 0) {
+        creatorFilled = true
         userCount++;
         for (let k = 0; k < creatorInfo.created[i].userAvail.length; k++) {
           availTimes.push(creatorInfo.created[i].userAvail[k])
@@ -399,20 +326,27 @@ app.post('/getAvail', async function(req, res) {
     }
   }
 
-  
-  if (req.body.users.length > 0) {
-    for (let j = 0; j < req.body.users.length; j++) {
-      let currUser = await userCollection.findOne({"username": req.body.users[j]})
-      console.log(req.body.users[j])
-      for (let x = 0; x < currUser.invited.length; x++) {
-        if (currUser.invited[x].youFreeID === req.body.youFreeID) {
-          if (currUser.invited[x].userAvail.length > 0) {
-            userCount++;
-            console.log("confusion")
-            for (let b = 0; b < currUser.invited[x].userAvail.length; b++) {
-              console.log("noooo")
-              console.log(currUser.invited[x].userAvail[b])
-              availTimes.push(currUser.invited[x].userAvail[b])
+  //doesn't display the available times until the creator fills out their times
+  if (creatorFilled) {
+    //checks if any users have been added 
+    //(this is probably not needed but I didn't want to change it and break the code)
+    if (req.body.users.length > 0) {
+      //loops through the users invited to the youFree
+      for (let j = 0; j < req.body.users.length; j++) {
+        //grabs next user
+        let currUser = await userCollection.findOne({"username": req.body.users[j]})
+        //loops through the users list of invited youFrees
+        for (let x = 0; x < currUser.invited.length; x++) {
+          //finds requested youFree
+          if (currUser.invited[x].youFreeID === req.body.youFreeID) {
+            //checks that the availability array contains selected times
+            //aka the user has filled out the youFree
+            //pushes to total possible times 
+            if (currUser.invited[x].userAvail.length > 0) {
+              userCount++;
+              for (let b = 0; b < currUser.invited[x].userAvail.length; b++) {
+                availTimes.push(currUser.invited[x].userAvail[b])
+              }
             }
           }
         }
@@ -423,9 +357,9 @@ app.post('/getAvail', async function(req, res) {
   let mergedTimes = {}
   let finalAvail = []
 
-  console.log("avail")
-  console.log(availTimes)
-
+  //creates an object containing all the unique times
+  //determines how many times a time appears in the total possible available times
+  //saves that number as the value for each time
   for(let g = 0; g < availTimes.length; g++) {
     if (mergedTimes.hasOwnProperty(availTimes[g])) {
       let currenCount = mergedTimes[availTimes[g]] + 1
@@ -434,17 +368,15 @@ app.post('/getAvail', async function(req, res) {
     else {
       mergedTimes[availTimes[g]] = 1;
     }
-  } 
-  console.log(mergedTimes)
-  console.log(userCount)
+  }
+  
+  //find the times where the number of users who have filled out the youFree
+  //is equal to the number of times the time appeared in the total possible times
   for (let key in mergedTimes) {
     if (mergedTimes[key] === userCount) {
-      console.log(key)
       finalAvail.push(key)
     }
   }
-  console.log("pleasee")
-  console.log(finalAvail)
   res.json(finalAvail);
 
 })
@@ -465,8 +397,8 @@ app.post('/getAvail', async function(req, res) {
 */
 
 app.post('/delete', (req, res) => {
-  console.log("req.session.username: " + req.session.username)
-  console.log("req.body.creator: " + req.body.creator)
+  console.log("/delete")
+  console.log(req.body)
   if (req.session.username === req.body.creator) {
     // the current user is the event creator
     youFreeCollection.deleteOne({_id: mongodb.ObjectId(req.body.youFreeID)})
@@ -545,6 +477,7 @@ app.post('/delete', (req, res) => {
   }
 })
 
+//post request for grabbing username and creator for a youFree
 app.post('/getInfo', async function(req, res) {
   console.log("/getInfo request: ")
   console.log(req.body)
