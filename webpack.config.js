@@ -2,8 +2,9 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
+  
   entry: [
-    'react-hot-loader/patch',
+    'url-search-params-polyfill',
     './src/index.js'
   ],
   output: {
@@ -16,6 +17,10 @@ const config = {
         test: /\.(js|jsx)$/,
         use: 'babel-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },
@@ -23,6 +28,9 @@ const config = {
     'static': {
       directory: './dist'
     }
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx', '.css']   
   }
 };
 
