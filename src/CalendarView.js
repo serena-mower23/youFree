@@ -132,7 +132,9 @@ class CalendarView extends React.Component {
         .then(response => response.json())
         .then(json => { 
             if (json.success) {
-                window.location.href = "/home", true
+                let url = window.location.href
+                url = url + "/home"
+                window.location.href = url, true
             }
             else {
                 alert("You can't create youFrees with duplicate names.")
