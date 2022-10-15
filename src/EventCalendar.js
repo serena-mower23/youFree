@@ -34,7 +34,7 @@ class EventCalendar extends React.Component {
 
     handleView( e ) {
         e.preventDefault()
-        window.location.href = `http://localhost:8080/edit-calendar?id=${this.props.event.youFreeID}`
+        window.location.href = `/edit-calendar?id=${this.props.event.youFreeID}`
     }
 
     handleDelete( e, id, creator ) {
@@ -53,7 +53,7 @@ class EventCalendar extends React.Component {
             },
             body
         })
-        .then(window.location.href = "http://localhost:8080/home", true)
+        .then(window.location.href = "/home", true)
     }
 
     async componentDidMount() {
