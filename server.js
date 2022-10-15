@@ -46,10 +46,10 @@ app.post('/login', (req, res) => {
       if (req.body.password === result[0].password) {
         req.session.login = true
         // redirect to home page
-        res.redirect('http://localhost:8080/home')
+        res.redirect('/home')
       } else {
         // stay at login page
-        res.redirect('http://localhost:8080')
+        res.redirect('/')
       }
     } else {
       newUser = true
@@ -59,7 +59,7 @@ app.post('/login', (req, res) => {
       userCollection.insertOne( req.body )
       req.session.login = true
       //redirect to home page
-      res.redirect('http://localhost:8080/home')
+      res.redirect('/home')
     }
   })
 })
@@ -76,7 +76,7 @@ app.use( function(req, res, next) {
   if ( req.session.login === true ) {
     next()
   } else {
-    res.redirect('http://localhost:8080')
+    res.redirect('/')
   }
 })
 
