@@ -24,50 +24,32 @@ class EditView extends React.Component {
         this.setState({schedule: newSchedule});
     }
 
-    handleAvail = (availableTimes, type) => {
-        console.log(availableTimes)
-        let curAvail = availableTimes
-        let timesArray = []
-        
-        for(let x = 0; x < curAvail.length; x++) {
-            let timeCount = {
-                totalUsers: 1,
-                time: curAvail[x]
-            }
-            timesArray.push(timeCount)
+    handleAvail = async (youFreeID, creator, users, type) => {
+        const param = {
+            youFreeID: youFreeID,
+            creator: creator,
+            users: users
         }
 
-        for (let y = 0; y < timesArray.length; y++) {
-            let currTimeCount = timesArray[y]
-            let totalUsersUpdated = currTimeCount.totalUsers
-            let time = currTimeCount.time
-            if (this.state.users > 0) {
-                for (let i = 0; i < this.state.users.length; i++) {
-                    if (this.state.users[i].userAvail.length !== 0) {
-                        for (let j = 0; j < this.state.users[i].userAvail; j++) {
-       
-                            if (this.state.users[i].userAvail[j] === currTimeCount.time) {
-                                totalUsersUpdated++;
-                            }
-                        }
-                    }
-                }
-                currTimeCount = {
-                    totalUsers: totalUsersUpdated,
-                    time:time
-                }
-                timesArray[y] = currTimeCount
-            }
-        }
+        let body = JSON.stringify(param)
 
+        const res =  await fetch("/getAvail", {
+            method:"POST",
+            body,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const json = await res.json()
+        console.log(json)
+
+        console.log("brooo")
+        console.log(json)
+        let timesArray = json;
         let changedTimes = []    
         for (let i = 0; i < timesArray.length; i++) {
-            console.log(timesArray[i])
-            let date = new Date(timesArray[i].time)
+            let date = new Date(timesArray[i])
             let dateString = ""
-
-            console.log("WHYYY")
-            console.log(type)
 
             if (type === 0) {
                 dateString = date.toLocaleString()
@@ -75,21 +57,78 @@ class EditView extends React.Component {
             else if (type === 1) {
                 let dateStringFirst = date.toLocaleString('en-us', {  weekday: 'long' })
                 let second = date.toLocaleTimeString()
-                console.log(second)
                 dateString = dateStringFirst + ", " + second
             }
-            console.log(dateString)
             changedTimes.push(dateString)
         }
-
-
-
+        console.log("PRETTY PLEASE")
+        console.log(changedTimes)
         this.setState({ timesArray: changedTimes})
-
+        this.setState({ready:true})
     }
 
+    // handleAvail = (availableTimes, type) => {
+    //     console.log(availableTimes)
+    //     let curAvail = availableTimes
+    //     let timesArray = []
+        
+    //     for(let x = 0; x < curAvail.length; x++) {
+    //         let timeCount = {
+    //             totalUsers: 1,
+    //             time: curAvail[x]
+    //         }
+    //         timesArray.push(timeCount)
+    //     }
+
+    //     for (let y = 0; y < timesArray.length; y++) {
+    //         let currTimeCount = timesArray[y]
+    //         let totalUsersUpdated = currTimeCount.totalUsers
+    //         let time = currTimeCount.time
+    //         if (this.state.users > 0) {
+    //             for (let i = 0; i < this.state.users.length; i++) {
+    //                 if (this.state.users[i].userAvail.length !== 0) {
+    //                     for (let j = 0; j < this.state.users[i].userAvail; j++) {
+       
+    //                         if (this.state.users[i].userAvail[j] === currTimeCount.time) {
+    //                             totalUsersUpdated++;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //             currTimeCount = {
+    //                 totalUsers: totalUsersUpdated,
+    //                 time:time
+    //             }
+    //             timesArray[y] = currTimeCount
+    //         }
+    //     }
+
+    //     let changedTimes = []    
+    //     for (let i = 0; i < timesArray.length; i++) {
+    //         console.log(timesArray[i])
+    //         let date = new Date(timesArray[i].time)
+    //         let dateString = ""
+
+    //         console.log("WHYYY")
+    //         console.log(type)
+
+    //         if (type === 0) {
+    //             dateString = date.toLocaleString()
+    //         }
+    //         else if (type === 1) {
+    //             let dateStringFirst = date.toLocaleString('en-us', {  weekday: 'long' })
+    //             let second = date.toLocaleTimeString()
+    //             console.log(second)
+    //             dateString = dateStringFirst + ", " + second
+    //         }
+    //         console.log(dateString)
+    //         changedTimes.push(dateString)
+    //     }
+    //     this.setState({ timesArray: changedTimes})
+    // }
+
+
     handleUpdate = async (e) => {
-        e.preventDefault
         const param = {
             youFreeID: this.state.youFreeID,
             currentUser: currentUser, 
@@ -100,16 +139,14 @@ class EditView extends React.Component {
 
         let body = JSON.stringify(param)
 
-        const res =  await fetch("/update", {
-            method:"POST",
-            body,
+        fetch('/update', {
+            method:'POST',
             headers: {
-                "Content-Type": "application/json"
-            }
+                'Content-Type': 'application/json'
+            },
+            body
         })
-        // window.location.reload()
-        // const json = await res.json()
-        // this.setState({ schedule: json.schedule})
+        .then(window.location.reload())
     }
 
     handleLoad = async () => {
@@ -148,10 +185,7 @@ class EditView extends React.Component {
         this.setState({ youFreeID: json.youFreeID})
         this.setState({type:json.type})
 
-        this.handleAvail(json.availableTimes, json.type)
-        console.log(this.state.availableTimes)
-
-        this.setState({ready:true})
+        this.handleAvail(json.youFreeID, json.creator, json.users, json.type)
     }
 
     // handleNameChange = newName => {
@@ -194,13 +228,21 @@ class EditView extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    if (json.userExists) {
-                        alert("The user has been invited.")
-                    } else {
-                        alert("The username does not exist.")
+                    // 1 if user doesn't exist
+                    // 2 if user exists and isn't already added
+                    // 3 if user exists and is already added
+                    console.log(json.userExists)
+                    if (json.userExists === 1) { 
+                        alert("This user doesn't exist.")
+                    } 
+                    else if (json.userExits === 2) {
+                        alert("User added!")
+                    }
+                    else if (json.userExits === 3) {
+                        alert("This user has already been invited.")
                     }
                 })
-            } else {
+            } else  {
                 alert("Please provide a username that is not your own.")
             }
             document.getElementById("addedUser").value = ""
@@ -225,7 +267,7 @@ class EditView extends React.Component {
                             <div className="col-md-6 themed-grid-col">
                                 <h1 className="text-center mb-3">{this.state.name}</h1>
                                 <p className="text-center">Enter the username of the user to invite.</p>
-                                <div className="row row-cols-lg-auto align-items-center d-flex justify-content-center">
+                                <div className="row row-cols-sm-auto align-items-center d-flex justify-content-center">
                                     <div className="col-12 text-center">
                                         <div class="input-group">
                                             <div class="input-group-text">@</div>
@@ -233,7 +275,7 @@ class EditView extends React.Component {
                                         </div>
                                         {/* <div className="invalid-feedback">Please provide an existing username for your youFree.</div>  */}
                                     </div>
-                                    <div className="d-sm-block col-12">
+                                    <div className="d-grid d-sm-block col-12">
                                         <button type="submit" className="btn btn-primary" onClick={this.handleUpdateAddedUsers}>Invite</button>
                                     </div>
                                 </div>
@@ -260,11 +302,16 @@ class EditView extends React.Component {
                             </div>
                             <div className="col-md-4 themed-grid-col">
                                 <h4 className="text-center mt-5">Available Times</h4>
-                                <ul>
-                                    {this.state.timesArray.map( (time, index) =>
-                                        <li>{time}</li>
-                                    )}
-                                </ul>
+                                <table className="table">
+                                    <tbody>
+                                        {this.state.timesArray.length === 0 && <p className="text-center fst-italic">There are currently no available times in common.</p>}
+                                        {this.state.timesArray.length > 0 && this.state.timesArray.map( (time, index) =>
+                                            <tr>
+                                                <td className="text-center">{time}</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

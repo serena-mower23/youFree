@@ -33,7 +33,7 @@ class EventCalendar extends React.Component {
             },
             body
         })
-        .then(window.location.reload())
+        .then(window.location.href = "http://localhost:8080/home", true)
     }
 
     async componentDidMount( e ) {

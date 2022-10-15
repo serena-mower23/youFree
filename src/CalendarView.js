@@ -4,8 +4,8 @@ import Select from "react-select";
 import Navbar from "./NavBar";
 
 const values = [
-    {label: "Custom Week", weekType: 0, dateFormat:"M/D"},
-    {label: "Blank Week", weekType: 1, dateFormat: "ddd"},
+    {label: "Specific Dates", weekType: 0, dateFormat:"M/D"},
+    {label: "Generic Week", weekType: 1, dateFormat: "ddd"},
 ]
 
 const days = [
@@ -139,7 +139,7 @@ class CalendarView extends React.Component {
             },
             body
         })
-        window.location.href = "http://localhost:8080/home"
+        .then(window.location.href = "http://localhost:8080/home", true)
     }
 
     handleNumChange = (newNum) => {
@@ -295,7 +295,7 @@ class CalendarView extends React.Component {
                                     <h1 className="text-center">{this.state.name}</h1>
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
-                                <div className="mb-5 m-auto">
+                                <div className="mb-5 ms-5 m-auto">
                                     {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
                                             <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
@@ -360,7 +360,7 @@ class CalendarView extends React.Component {
                                     <h1 className="text-center">{this.state.name}</h1>
                                     <p className="text-center">Click and drag to select your availability.</p>
                                 </div>
-                                <div className="mb-5 m-auto">
+                                <div className="mb-5 ms-5 m-auto">
                                     {/* <form action="/create" method="POST"> */}
                                         <div className="d-grid d-sm-block text-center">
                                             <button type="submit" className="btn btn-primary" onClick={this.handleCreate}>Create youFree?</button>
