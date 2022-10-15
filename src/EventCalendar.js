@@ -55,7 +55,10 @@ class EventCalendar extends React.Component {
             },
             body
         })
-        .then(window.location.href = "/home", true)
+        .then( e => {
+            let url = window.location.href
+            url = url + "/home"
+            window.location.href = url, true})
     }
 
     async componentDidMount() {
