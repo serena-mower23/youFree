@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import ScheduleSelector from "react-schedule-selector";
 import Select from "react-select";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar";
 
 const values = [
     {label: "Specific Dates", weekType: 0, dateFormat:"M/D"},
